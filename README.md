@@ -721,7 +721,7 @@ Performing AJAX requests with jQuery 176
 Creating custom decorators for your views 179
 Adding AJAX pagination to your list views 181
 Summary
-Chapter 6: Tracking User Actions 187
+## Chapter 6: Tracking User Actions 187
 Building a follow system 187
 Creating many-to-many relationships with an intermediary model 188
 Creating list and detail views for user profiles 191
