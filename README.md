@@ -438,8 +438,9 @@
         path('', include('django.contrib.auth.urls')),
         ]
         ```
-
-- User registration and user profiles
+<a name="A3"></a>
+### User registration and user profiles
+<a name="A31"></a>
 - User registration
     - Edit account/forms.py
         ```
@@ -500,7 +501,7 @@
         ```
         <p>Please, use the following form to log-in. If you don't have an account <a href="{% url "register" % ">register here</a></p>
         ```
-
+<a name="A32"></a>
 - Extending the user model
     - Edit account/models.py
         - docs: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#django.contrib.auth.get_user_model
@@ -615,10 +616,11 @@
         your profile</a> or <a href="{% url "password_change" %}">change your
         password</a>.</p>
         ```
-    
+<a name="A33"></a>    
 - Using a custom user model
     - bisa juga menggunakan custom user model, implementasi: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#substituting-a-custom-user-model.
-    
+
+<a name="A34"></a>
 - Using the messages framework
     - docs: https://docs.djangoproject.com/en/3.0/ref/contrib/messages/.
     - base.html
@@ -657,8 +659,10 @@
         - http://127.0.0.1:8000/account/edit/
         - jika sukses akan muncul pesan
 
-- Building a custom authentication backend
-    - docs: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#otherauthentication-sources
+<a name="A4"></a>
+### Building a custom authentication backend
+- docs: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#otherauthentication-sources
+
     - Buat account/authentication.py
         ```
         from django.contrib.auth.models import User
@@ -690,9 +694,9 @@
     - Tes login menggunakan email
         - http://127.0.0.1:8000/account/login/
    
-
-- Adding social authentication to your site
-    - docs: https://python-social-auth.readthedocs.io/en/latest/backends/index.html#supported-backends.
+<a name="A5"></a>
+### Adding social authentication to your site
+- docs: https://python-social-auth.readthedocs.io/en/latest/backends/index.html#supported-backends.
     - pip install social-auth-app-django
     - register di settings.py --> 'social_django',
     - python manage.py migrate
@@ -708,7 +712,7 @@
             ALLOWED_HOSTS = ['aris.com', 'localhost', '127.0.0.1']
             ```
         - Tes http://aris.com:8000/account/login/
-
+<a name="A51"></a>
 - Running the development server through HTTPS
     - pip install django-extensions
     - settings.py --> INSTALLED_APPS --> 'django_extensions',
@@ -717,106 +721,142 @@
     - python manage.py runserver_plus --cert-file cert.crt
     - https://mysite.com:8000/account/login/ --> menggunakan https, maka akan muncul peringatan untrusted image
 
-
+<a name="A52"></a>
 - Authentication using Facebook
     - tutorial video: https://www.youtube.com/watch?v=oAWUyg_PPLk
     - settings.py --> AUTHENTICATION_BACKENDS
-        ```
-        'social_core.backends.facebook.FacebookOAuth2',
-        ```
+            ```
+            'social_core.backends.facebook.FacebookOAuth2',
+            ```
     - https://developers.facebook.com/apps/
     - settings.py
-        ```
-        SOCIAL_AUTH_FACEBOOK_KEY = 'XXX' # Facebook App ID
-        SOCIAL_AUTH_FACEBOOK_SECRET = 'XXX' # Facebook App Secret
-        SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
-        ```
+            ```
+            SOCIAL_AUTH_FACEBOOK_KEY = 'XXX' # Facebook App ID
+            SOCIAL_AUTH_FACEBOOK_SECRET = 'XXX' # Facebook App Secret
+            SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+            ```
     - masukkan http://mysite.com:8000/social-auth/complete/facebook/ pada OAuth Redirect URIs
     - account/registration/login.html
         - letakkan dibawah content
             ```
-            <div class="social">
-            <ul>
-            <li class="facebook">
-            <a href="{% url "social:begin" "facebook" %}">Sign in with
-            Facebook</a>
-            </li>
-            </ul>
-            </div>
+                <div class="social">
+                <ul>
+                <li class="facebook">
+                <a href="{% url "social:begin" "facebook" %}">Sign in with
+                Facebook</a>
+                </li>
+                </ul>
+                </div>
             ```
     - buka https://mysite.com:8000/account/login/, kini bisa login menggunakan fb
-
-- Authentication using Twitter
-    - skip, butuh review dulu
-
-- Authentication using Google
-    - Tutorial video: https://www.youtube.com/watch?v=kj9llVn5vJI&t=272s
-    - https://developers.google.com/identity/protocols/OAuth2
-    
-    - settings.py --> AUTHENTICATION_BACKENDS
-        ```
-        'social_core.backends.google.GoogleOAuth2',
-        ```
-    - https://console.developers.google.com/apis/credentials
-        - Authorised redirect URIs: Add https://aris.com:8000/social-auth/complete/google-oauth2/
-    - settings.py
-        ```
-        SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'XXX' # Google Consumer Key
-        SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'XXX' # Google Consumer Secret
-        ```
-    - registration/login.html
-        ```
-        <li class="google">
-        <a href="{% url "social:begin" "google-oauth2" %}">Login with
-        Google</a>
-        </li>
-        ```
-    - https://mysite.com:8000/account/login/
+<a name="A53"></a>
+    - Authentication using Twitter
+        - skip, butuh review dulu
+<a name="A54"></a>
+    - Authentication using Google
+        - Tutorial video: https://www.youtube.com/watch?v=kj9llVn5vJI&t=272s
+        - https://developers.google.com/identity/protocols/OAuth2
+        
+        - settings.py --> AUTHENTICATION_BACKENDS
+            ```
+            'social_core.backends.google.GoogleOAuth2',
+            ```
+        - https://console.developers.google.com/apis/credentials
+            - Authorised redirect URIs: Add https://aris.com:8000/social-auth/complete/google-oauth2/
+        - settings.py
+            ```
+            SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'XXX' # Google Consumer Key
+            SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'XXX' # Google Consumer Secret
+            ```
+        - registration/login.html
+            ```
+            <li class="google">
+            <a href="{% url "social:begin" "google-oauth2" %}">Login with
+            Google</a>
+            </li>
+            ```
+        - https://mysite.com:8000/account/login/
     
 <a name="B"></a>
 ## Chapter 5: Sharing Content on Your Website
-- Creating an image bookmarking website
-- django-admin startapp images
-### Building the image model 150
-Creating many-to-many relationships 152
-Registering the image model in the administration site 153
-Posting content from other websites 153
-Cleaning form fields 154
-Overriding the save() method of a ModelForm 155
-Building a bookmarklet with jQuery 160
-Creating a detail view for images 168
-Creating image thumbnails using easy-thumbnails 170
-Adding AJAX actions with jQuery 172
-Loading jQuery 173
-Cross-site request forgery in AJAX requests 174
-Performing AJAX requests with jQuery 176
-Creating custom decorators for your views 179
-Adding AJAX pagination to your list views 181
-Summary
+<a name="B1"></a>
+### Creating an image bookmarking website
+<a name="B11"></a>
+- Building the image model
+<a name="B12"></a>
+- Creating many-to-many relationships
+<a name="B13"></a>
+- Registering the image model in the administration site
+<a name="B2"></a>
+### Posting content from other websites
+<a name="B21"></a>
+- Cleaning form fields
+<a name="B22"></a>
+- Overriding the save() method of a ModelForm
+<a name="B23"></a>
+- Building a bookmarklet with jQuery
+<a name="B3"></a>
+### Creating a detail view for images
+<a name="B4"></a>
+### Creating image thumbnails using easy-thumbnails
+<a name="B5"></a>
+### Adding AJAX actions with jQuery
+<a name="B51"></a>
+- Loading jQuery
+<a name="B52"></a>
+- Cross-site request forgery in AJAX requests
+<a name="B53"></a>
+- Performing AJAX requests with jQuery
+<a name="B6"></a>
+### Creating custom decorators for your views
+<a name="B7"></a>
+### Adding AJAX pagination to your list views
 
-<a name="B"></a>
-## Chapter 6: Tracking User Actions 187
-Building a follow system 187
-Creating many-to-many relationships with an intermediary model 188
-Creating list and detail views for user profiles 191
-Building an AJAX view to follow users 196
-Building a generic activity stream application 198
-Using the contenttypes framework 200
-Adding generic relations to your models 201
-Avoiding duplicate actions in the activity stream 204
-Adding user actions to the activity stream 205
-Displaying the activity stream 206
-Optimizing QuerySets that involve related objects 207
-Using select_related() 207
-Using prefetch_related() 208
-Creating templates for actions 208
-Using signals for denormalizing counts 210
-Working with signals 211
-Application configuration classes 213
-Using Redis for storing item views 215
-Installing Redis 215
-Using Redis with Python 217
-Storing item views in Redis 218
-Storing a ranking in Redis 220
-Next steps with Redis 223
-Summary
+<a name="C"></a>
+## Chapter 6: Tracking User Actions
+<a name="C1"></a>
+### Building a follow system
+<a name="C11"></a>
+- Creating many-to-many relationships with an intermediary model
+<a name="C12"></a>
+- Creating list and detail views for user profiles
+<a name="C13"></a>
+- Building an AJAX view to follow users
+<a name="C2"></a>
+- Building a generic activity stream application
+<a name="C21"></a>
+- Using the contenttypes framework
+<a name="C22"></a>
+- Adding generic relations to your models
+<a name="C23"></a>
+- Avoiding duplicate actions in the activity stream
+<a name="C24"></a>
+- Adding user actions to the activity stream
+<a name="C25"></a>
+- Displaying the activity stream
+<a name="C26"></a>
+- Optimizing QuerySets that involve related objects
+<a name="C27"></a>
+- Using select_related()
+<a name="C28"></a>
+Using prefetch_related()
+<a name="C29"></a>
+Creating templates for actions
+<a name="C3"></a>
+### Using signals for denormalizing counts
+<a name="C31"></a>
+- Working with signals
+<a name="C32"></a>
+- Application configuration classes
+<a name="C4"></a>
+- Using Redis for storing item views
+<a name="C41"></a>
+- Installing Redis
+<a name="C42"></a>
+- Using Redis with Python
+<a name="C43"></a>
+- Storing item views in Redis
+<a name="C44"></a>
+- Storing a ranking in Redis
+<a name="C45"></a>
+- Next steps with Redis
