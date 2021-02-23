@@ -1,6 +1,6 @@
 # SosmedAntonio
 
-- [instalasi](### Instalasi Django dan Struktur App)
+- [instalasi](###Instalasi Django dan Struktur App)
 
 
 
