@@ -1,5 +1,9 @@
 # SosmedAntonio
 
+- [instalasi](### Instalasi Django dan Struktur App)
+
+
+
 ## Chapter 4: Building a Social Website
 ### Instalasi Django dan Struktur App
 - Clone repo dan venv
