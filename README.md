@@ -65,16 +65,6 @@
         - [ 4.5. Next steps with Redis](#C23)
 
 
-<a name="B"></a>
-
-
-<a name="A"></a>
-# A. BASIC_BACKEND-API
-
-## 1. Instalasi
-<a name="A11"></a>
-- 1.1. Instalasi Django
-
 <a name="A"></a>
 ## Chapter 4: Building a Social Website
 <a name="A1"></a>
@@ -110,7 +100,7 @@
     - python manage.py migrate
 
 
-
+<a name="A2"></a>
 ### Using the Django authentication framework
     • AuthenticationMiddleware: Associates users with requests using sessions
     • SessionMiddleware: Handles the current session across requests
@@ -118,6 +108,7 @@
         • User: A user model with basic fields; the main fields of this model are username, password, email, first_name, last_name, and is_active
         • Group: A group model to categorize users
         • Permission: Flags for users or groups to perform certain actions
+<a name="A22"></a>
 - Creating a login view
     - account/forms.py
         ```
@@ -204,6 +195,7 @@
     - 127.0.0.1:8000/account/login
     - maka akan muncul halaman login
 
+<a name="A23"></a>
 - Using Django authentication views
     - docs : https://docs.djangoproject.com/en/3.0/topics/auth/default/#allauthentication-
     - otentifikasi bawaan django dihandle `django.contrib.auth.views`:
@@ -220,7 +212,8 @@
             • PasswordResetDoneView: Tells users that an email—including a link to reset their password—has been sent to them.
             • PasswordResetConfirmView: Allows users to set a new password.
             • PasswordResetCompleteView: The success view that the user is redirected to after successfully resetting their password.
-        
+
+<a name="A24"></a>        
 - Login and logout views
     - Edit account/urls.py
         ```
@@ -328,6 +321,7 @@
     ```
     - http://127.0.0.1:8000/account/login/
 
+<a name="A25"></a>
 - Changing password views
     - Edit account/urls.py
         ```
@@ -362,6 +356,7 @@
         ```
     - http://127.0.0.1:8000/account/password_change/
 
+<a name="A26"></a>
 - Resetting password views
     - Edit account/urls.py
         ```
