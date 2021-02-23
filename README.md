@@ -1,6 +1,83 @@
-# SosmedAntonio
+# Daftar isi - Bookmarks sosmed
 
+- [ A. Chapter 4: Building a Social Website ](#A)
+    - [ 1. Creating a social website project ](#A1)
+        - [ 1.1. Starting your social website project ](#A11)
+    - [ 2. Using the Django authentication framework ](#A2)
+        - [ 2.1. Creating a login view ](#A21)
+        - [ 2.2. Using Django authentication views ](#A22)
+        - [ 2.3. Login and logout views ](#A23)
+        - [ 2.4. Changing password views ](#A24)
+        - [ 2.5. Resetting password views ](#A25)
+    - [ 3. User registration and user profiles ](#A3)
+        - [ 3.1. User registration ](#A31)
+        - [ 3.2 Extending the user model ](#A32)
+        - [ 3.3 Using a custom user model ](#A33)
+        - [ 3.4 Using the messages framework ](#A34)
+    - [ 4. Building a custom authentication backend ](#A4)
+    - [ 5. Adding social authentication to your site ](#A5)
+        - [ 5.1. Running the development server through HTTPS ](#A51)
+        - [ 5.2. Authentication using Facebook ](#A52)
+        - [ 5.3. Authentication using Twitter ](#A53)
+        - [ 5.4. Authentication using Google ](#A54)
+
+- [ B. Chapter 5: Sharing Content on Your Website ](#B)
+    - [ 1. Creating an image bookmarking website ](#B1)
+        - [ 1.1. Building the image model](#B11)
+        - [ 1.2. Creating many-to-many relationships](#B12)
+        - [ 1.3. Registering the image model in the administration site](#B13)
+    - [ 2. Posting content from other websites](#B2)
+        - [ 2.1 Cleaning form fields](#B21)
+        - [ 2.2 Overriding the save() method of a ModelForm](#B22)
+        - [ 2.3 Building a bookmarklet with jQuery](#B23)
+    - [ 3. Creating a detail view for images](#B3)
+    - [ 4. Creating image thumbnails using easy-thumbnails](#B4)
+    - [ 5. Adding AJAX actions with jQuery](#B5)
+        - [ 5.1. Loading jQuery](#B51)
+        - [ 5.2. Cross-site request forgery in AJAX requests](#B52)
+        - [ 5.3. Performing AJAX requests with jQuery](#B53)
+    - [ 6. Creating custom decorators for your views](#B6)
+    - [ 7. Adding AJAX pagination to your list views](#B7)
+
+- [ C. Chapter 5: Tracking User Actions ](#C)
+    - [ 1. Building a follow system ](#C1)
+        - [ 1.1. Creating many-to-many relationships with an intermediary model ](#C11)
+        - [ 1.2. Creating list and detail views for user profiles](#C12)
+        - [ 1.3. Building an AJAX view to follow users](#C13)
+    - [ 2. Building a generic activity stream application](#C2)
+        - [ 2.1. Using the contenttypes framework](#C21)
+        - [ 2.2. Adding generic relations to your models](#C22)
+        - [ 2.3. Avoiding duplicate actions in the activity stream](#C23)
+        - [ 2.4. Adding user actions to the activity stream](#C24)
+        - [ 2.5. Displaying the activity stream](#C25)
+        - [ 2.6. Optimizing QuerySets that involve related objects](#C26)
+        - [ 2.7. Using select_related()](#C27)
+        - [ 2.8 Using prefetch_related()](#C28)
+        - [ 2.9. Creating templates for actions](#C29)
+    - [ 3. Using signals for denormalizing counts](#C3)
+        - [ 3.1. Working with signals](#C31)
+        - [ 3.2. Application configuration classes](#C32)
+    - [ 4. Using Redis for storing item views](#C4)
+        - [ 4.1. Installing Redis](#C19)
+        - [ 4.2. Using Redis with Python](#C20)
+        - [ 4.3. Storing item views in Redis](#C21)
+        - [ 4.4. Storing a ranking in Redis](#C22)
+        - [ 4.5. Next steps with Redis](#C23)
+
+
+<a name="B"></a>
+
+
+<a name="A"></a>
+# A. BASIC_BACKEND-API
+
+## 1. Instalasi
+<a name="A11"></a>
+- 1.1. Instalasi Django
+
+<a name="A"></a>
 ## Chapter 4: Building a Social Website
+<a name="A1"></a>
 ### Instalasi Django dan Struktur App
 - Clone repo dan venv
     - cd PYTHON_FOLDER
@@ -701,11 +778,11 @@
         ```
     - https://mysite.com:8000/account/login/
     
-
+<a name="B"></a>
 ## Chapter 5: Sharing Content on Your Website
 - Creating an image bookmarking website
 - django-admin startapp images
-Building the image model 150
+### Building the image model 150
 Creating many-to-many relationships 152
 Registering the image model in the administration site 153
 Posting content from other websites 153
@@ -721,6 +798,8 @@ Performing AJAX requests with jQuery 176
 Creating custom decorators for your views 179
 Adding AJAX pagination to your list views 181
 Summary
+
+<a name="B"></a>
 ## Chapter 6: Tracking User Actions 187
 Building a follow system 187
 Creating many-to-many relationships with an intermediary model 188
