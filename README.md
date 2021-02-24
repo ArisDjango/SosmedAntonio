@@ -2,7 +2,7 @@
 
 - [ A. Chapter 4: Building a Social Website ](#A)
     - [ 1. Creating a social website project ](#A1)
-    - [ 1.1. Starting your social website project ](#A11)
+        - [ 1.1. Starting your social website project ](#A11)
     - [ 2. Using the Django authentication framework ](#A2)
         - [ 2.1. Creating a login view ](#A21)
         - [ 2.2. Using Django authentication views ](#A22)
@@ -94,7 +94,7 @@
     ```
     'account.apps.AccountConfig',
     ```
-- Mendesain account data model
+- model dari `account` apps
     - model.py
     - python manage.py makemigrations account
     - python manage.py migrate
@@ -108,8 +108,16 @@
         • User: A user model with basic fields; the main fields of this model are username, password, email, first_name, last_name, and is_active
         • Group: A group model to categorize users
         • Permission: Flags for users or groups to perform certain actions
-<a name="A22"></a>
-- Creating a login view
+<a name="A21"></a>
+- Creating a login view ===========================
+    - Tujuan:
+        - Menggunakan django authentication framework untuk system login
+        - Membuat view login yang menghandle:
+            - data user/pass dari post user
+            - otentikasi user terhadap data di dbase
+            - cek apakah user aktif
+            - Mengijinkan user masuk web dan memulai authentication session
+
     - account/forms.py
         ```
             from django import forms
@@ -195,7 +203,7 @@
     - 127.0.0.1:8000/account/login
     - maka akan muncul halaman login
 
-<a name="A23"></a>
+<a name="A22"></a>
 - Using Django authentication views
     - docs : https://docs.djangoproject.com/en/3.0/topics/auth/default/#allauthentication-
     - otentifikasi bawaan django dihandle `django.contrib.auth.views`:
