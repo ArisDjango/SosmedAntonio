@@ -1,11 +1,11 @@
 # Daftar isi - Bookmarks sosmed
 
 - [ A. Chapter 4: Building a Social Website ](#A)
-    - [ 1. Creating a social website project ](#A1)
-    - [ 2. Using the Django authentication framework ](#A2)
-        - [ 2.1. Creating a login view ](#A21)
-        - [ 2.2. Using Django authentication views ](#A22)
-        - [ 2.3. Login and logout views ](#A23)
+    - [ 1. Social website project ](#A1)
+    - [ 2. Django authentication framework ](#A2)
+        - [ 2.1. login views ](#A21)
+        - [ 2.2. Django authentication views ](#A22)
+        - [ 2.3. Login dan logout views ](#A23)
         - [ 2.4. Changing password views ](#A24)
         - [ 2.5. Resetting password views ](#A25)
     - [ 3. User registration and user profiles ](#A3)
@@ -100,7 +100,7 @@
 
 
 <a name="A2"></a>
-### Using the Django authentication framework
+### Menggunakan Django authentication framework
     • AuthenticationMiddleware: Associates users with requests using sessions
     • SessionMiddleware: Handles the current session across requests
     The authentication framework also includes the following models:
@@ -108,7 +108,7 @@
         • Group: A group model to categorize users
         • Permission: Flags for users or groups to perform certain actions
 <a name="A21"></a>
-- Creating a login view ===========================
+- login view ===========================
     - Tujuan:
         - Menggunakan django authentication framework untuk system login
         - Membuat view login yang menghandle:
@@ -116,6 +116,7 @@
             - otentikasi user terhadap data di dbase
             - cek apakah user aktif
             - Mengijinkan user masuk web dan memulai authentication session
+        - login sementara menggunakan akun admin, Belum membahas registrasi user, itu akan dibahas di bab next
 
     - account/forms.py
         ```
@@ -179,25 +180,41 @@
                 - base.html
         - Buat account/static/css/base.css
         - edit base.html
-        ```
-        {% load static %}
-        <!DOCTYPE html>
-        <html>
-            <head>
-                <title>{% block title %}{% endblock %}</title>
-            <link href="{% static "css/base.css" %}" rel="stylesheet">
-            </head>
-            <body>
-                <div id="header">
-                    <span class="logo">Bookmarks</span>
-                </div>
-                <div id="content">
-                    {% block content %}
-                    {% endblock %}
-                </div>
-            </body>
-        </html>
-        ```
+            ```
+            {% load static %}
+            <!DOCTYPE html>
+            <html>
+                <head>
+                    <title>{% block title %}{% endblock %}</title>
+                <link href="{% static "css/base.css" %}" rel="stylesheet">
+                </head>
+                <body>
+                    <div id="header">
+                        <span class="logo">Bookmarks</span>
+                    </div>
+                    <div id="content">
+                        {% block content %}
+                        {% endblock %}
+                    </div>
+                </body>
+            </html>
+            ```
+        - edit account/login.html
+            ```
+            {% extends "base.html" %}
+            {% block title %}Log-in{% endblock %}
+
+            {% block content %}
+
+                <h1>Log-in</h1>
+                    <p>Please, use the following form to log-in:</p>
+                <form method="post">
+                    {{ form.as_p }}
+                    {% csrf_token %}
+                    <p><input type="submit" value="Log in"></p>
+                </form>
+            {% endblock %}
+            ```
     - 127.0.0.1:8000/admin/
     - 127.0.0.1:8000/account/login
     - maka akan muncul halaman login
@@ -206,8 +223,7 @@
 - Using Django authentication views
     - docs : https://docs.djangoproject.com/en/3.0/topics/auth/default/#allauthentication-
     - otentifikasi bawaan django dihandle `django.contrib.auth.views`:
-    - All of them are located in django.contrib.auth.views:
-        - Login Logout
+        - Login and Logout
             • LoginView: menghandle form login user
             • LogoutView: Logout user
 
@@ -215,12 +231,12 @@
             • PasswordChangeView: menghandel form perubahan password user
             • PasswordChangeDoneView: menghandle view ketika perubahan password berhasil redirect ke ...
         - views untuk menghandle reset password:
-            • PasswordResetView: Allows users to reset their password. It generates a one-time-use link with a token and sends it to a user's email account.
-            • PasswordResetDoneView: Tells users that an email—including a link to reset their password—has been sent to them.
-            • PasswordResetConfirmView: Allows users to set a new password.
-            • PasswordResetCompleteView: The success view that the user is redirected to after successfully resetting their password.
+            • PasswordResetView: sistem reset password yang menggenerate one-time-use link dengan token dan dikirim ke email user
+            • PasswordResetDoneView: pesan ke user bahwa link reset sudah dikirim ke email.
+            • PasswordResetConfirmView: user mengatur password baru.
+            • PasswordResetCompleteView: pesan ke user bahwa reset password berhasil, dan redirect ke home.
 
-<a name="A24"></a>        
+<a name="A23"></a>        
 - Login and logout views
     - Edit account/urls.py
         ```
@@ -266,7 +282,7 @@
         
         <h1>Logged out</h1>
         <p>
-            You have been successfully logged out.
+            Anda telah berhasil logged out.
             You can <a href="{% url "login" %}">log-in again</a>.
         </p>
 
@@ -278,13 +294,14 @@
 
         @login_required
         def dashboard(request):
-        return render(request,'account/dashboard.html',{'section': 'dashboard'})
+            return render(request,'account/dashboard.html',{'section': 'dashboard'})
         ```
     - Buat templates/account/dashboard.html
         ```
         {% extends "base.html" %}
         {% block title %}Dashboard{% endblock %}
         {% block content %}
+
         <h1>Dashboard</h1>
         <p>Welcome to your dashboard.</p>
         {% endblock %}
@@ -298,6 +315,12 @@
         LOGIN_REDIRECT_URL = 'dashboard'
         LOGIN_URL = 'login'
         LOGOUT_URL = 'logout'
+        ```
+        ```
+        Note:
+        • LOGIN_REDIRECT_URL: redirect URL setelah user berhasil login (jika tidak ada next parameter lain)
+        • LOGIN_URL: URL untuk user log in (ex:, views menggunakan login_required decorator)
+        • LOGOUT_URL: URL untuk user log out
         ```
     - Edit templates/base.html
     ```
@@ -328,7 +351,7 @@
     ```
     - http://127.0.0.1:8000/account/login/
 
-<a name="A25"></a>
+<a name="A24"></a>
 - Changing password views
     - Edit account/urls.py
         ```
@@ -363,7 +386,7 @@
         ```
     - http://127.0.0.1:8000/account/password_change/
 
-<a name="A26"></a>
+<a name="A25"></a>
 - Resetting password views
     - Edit account/urls.py
         ```
@@ -436,7 +459,8 @@
         EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
         ```
     - http://127.0.0.1:8000/account/login/, lalu coba 'forgotten your password'
-    - Setelah fungsi reset berhasil, bisa mengganti semua auth.url menggunakan include (sama saja)
+    - Setelah fungsi reset berhasil, bisa mengganti semua auth.url pada account/urls menggunakan include (sama saja)
+    - doc auth.url: https://github.com/django/django/blob/stable/3.0.x/django/contrib/auth/urls.py.
         ```
         from django.urls import path, include
         # ...
@@ -447,6 +471,8 @@
         ```
 <a name="A3"></a>
 ### User registration and user profiles
+- Saat ini user yang telah terdaftar di db(didaftarkan admin), bisa login, logout, merubah password, reset password. 
+- sekarang saatnya membuat anonymous visitor agar bisa membuat akun user.
 <a name="A31"></a>
 - User registration
     - Edit account/forms.py
@@ -462,6 +488,14 @@
                     if cd['password'] != cd['password2']:
                         raise forms.ValidationError('Passwords don\'t match.')
                     return cd['password2']
+        ```
+        ```
+        Note:
+        - Menggunakan model form bawaan django (default field: username, first_name, email)
+        - Validasi username menggunakan parameter bawaaan model.form. akan error jika menggunakan username yang sama, karena param field username defaultnya unique=True
+        - ada 2 field tambahan, password & password2
+        - clean_password2() --> validasi password terhadap password2, harus sama
+        - cd = membersihkan field dari data input lama
         ```
     - Edit account/Views.py
         ```
