@@ -516,6 +516,15 @@
                 user_form = UserRegistrationForm()
             return render(request,'account/register.html',{'user_form': user_form})
         ```
+        ```
+        Note:
+        - import UserRegistrationForm() dari forms.py
+        - merequest post dari form tsb yg tampil di-->register.html
+        - is_valid() --> jika form.py tervalidasi, lanjut
+        - .set_password() --> hashing format password
+        - .save() --> Menyimpan user
+        - views digunakan oleh --> template/account/register.html
+        ```
     - Edit account/urls.py
         ```
         path('register/', views.register, name='register'),
@@ -537,10 +546,19 @@
 
         {% endblock %}
         ```
+        ```
+        Note:
+        - user_form = dari views.register
+        - as_p = digunakan sebagai post, ini yg akan diolah views
+        ```
     - http://127.0.0.1:8000/account/register/
     - Edit registration/login.html
         ```
         <p>Please, use the following form to log-in. If you don't have an account <a href="{% url "register" % ">register here</a></p>
+        ```
+        ```
+        Note:
+        - % url "register" % = path('register/', views.register, name='register'),
         ```
 <a name="A32"></a>
 - Extending the user model
