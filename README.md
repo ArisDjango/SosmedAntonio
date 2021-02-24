@@ -2,7 +2,6 @@
 
 - [ A. Chapter 4: Building a Social Website ](#A)
     - [ 1. Creating a social website project ](#A1)
-        - [ 1.1. Starting your social website project ](#A11)
     - [ 2. Using the Django authentication framework ](#A2)
         - [ 2.1. Creating a login view ](#A21)
         - [ 2.2. Using Django authentication views ](#A22)
