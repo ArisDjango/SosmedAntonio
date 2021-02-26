@@ -119,7 +119,7 @@
         - login sementara menggunakan akun admin, Belum membahas registrasi user, itu akan dibahas di bab next
 
     - account/forms.py
-        ```
+        ```python
             from django import forms
 
             class LoginForm(forms.Form):
@@ -127,7 +127,7 @@
                 password = forms.CharField(widget=forms.PasswordInput)
         ```
     - account/views.py
-        ```
+        ```python
         from django.http import HttpResponse
         from django.shortcuts import render
         from django.contrib.auth import authenticate, login
@@ -153,7 +153,7 @@
 
         ```
     - account/urls.py
-        ```
+        ```python
         from django.urls import path
         from . import views
 
@@ -163,7 +163,7 @@
         ]
         ```
     - core/urls.py
-        ```
+        ```python
         from django.urls import path, include
         from django.contrib import admin
 
@@ -180,7 +180,7 @@
                 - base.html
         - Buat account/static/css/base.css
         - edit base.html
-            ```
+            ```html
             {% load static %}
             <!DOCTYPE html>
             <html>
@@ -200,7 +200,7 @@
             </html>
             ```
         - edit account/login.html
-            ```
+            ```html
             {% extends "base.html" %}
             {% block title %}Log-in{% endblock %}
 
@@ -239,7 +239,7 @@
 <a name="A23"></a>        
 - Login and logout views
     - Edit account/urls.py
-        ```
+        ```python
         from django.contrib.auth import views as auth_views
             ...
             # path('login/', views.user_login, name='login'),
@@ -247,7 +247,7 @@
             path('logout/', auth_views.LogoutView.as_view(), name='logout'),
         ```
     - Buat templates/registration/login.html
-        ```
+        ```html
         {% extends "base.html" %}
         {% block title %}Log-in{% endblock %}
 
@@ -274,7 +274,7 @@
         {% endblock %}
         ```
     - Buat templates/registration/logged_out.html
-        ```
+        ```html
         {% extends "base.html" %}
         {% block title %}Logged out{% endblock %}
 
@@ -289,7 +289,7 @@
         {% endblock %}
         ```
     - Edit account/views.py
-        ```
+        ```python
         from django.contrib.auth.decorators import login_required
 
         @login_required
@@ -297,7 +297,7 @@
             return render(request,'account/dashboard.html',{'section': 'dashboard'})
         ```
     - Buat templates/account/dashboard.html
-        ```
+        ```html
         {% extends "base.html" %}
         {% block title %}Dashboard{% endblock %}
         {% block content %}
@@ -307,11 +307,11 @@
         {% endblock %}
         ```
     - Edit account/urls.py
-        ```
+        ```python
         path('', views.dashboard, name='dashboard'),
         ```
     - Edit core/settings.py
-        ```
+        ```python
         LOGIN_REDIRECT_URL = 'dashboard'
         LOGIN_URL = 'login'
         LOGOUT_URL = 'logout'
@@ -323,7 +323,7 @@
         • LOGOUT_URL: URL untuk user log out
         ```
     - Edit templates/base.html
-    ```
+    ```html
         <div id="header">
             <span class="logo">Bookmarks</span>
             {% if request.user.is_authenticated %}
@@ -354,13 +354,13 @@
 <a name="A24"></a>
 - Changing password views
     - Edit account/urls.py
-        ```
+        ```python
             # change password urls
             path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
             path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
         ```
     - Buat templates/registration/password_change_form.html
-        ```
+        ```html
         {% extends "base.html" %}
         {% block title %}Change your password{% endblock %}
         
@@ -375,7 +375,7 @@
         {% endblock %}
         ```
     - Buat templates/registration/password_change_done.html
-        ```
+        ```html
         {% extends "base.html" %}
         {% block title %}Password changed{% endblock %}
 
@@ -389,7 +389,7 @@
 <a name="A25"></a>
 - Resetting password views
     - Edit account/urls.py
-        ```
+        ```python
         # reset password urls
         path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
         path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
@@ -397,7 +397,7 @@
         path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
         ```
     - Buat file baru templates/registration/password_reset_form.html
-        ```
+        ```html
         {% extends "base.html" %}
         {% block title %}Reset your password{% endblock %}
 
@@ -412,13 +412,13 @@
         {% endblock %}
         ```
     - Buat file baru templates/registration/password_reset_email.html
-        ```
+        ```html
         Someone asked for password reset for email {{ email }}. Follow the link below:
         {{ protocol }}://{{ domain }}{% url "password_reset_confirm" uidb64=uid token=token %}
         Your username, in case you've forgotten: {{ user.get_username }}
         ```
     - Buat file baru templates/registration/password_reset_confirm.html
-        ```
+        ```html
         {% extends "base.html" %}
         {% block title %}Reset your password{% endblock %}
 
@@ -439,7 +439,7 @@
         {% endblock %}
         ```
     - Buat file baru templates/registration/password_reset_complete.html
-        ```
+        ```html
         {% extends "base.html" %}
         {% block title %}Password reset{% endblock %}
         {% block content %}
@@ -451,17 +451,17 @@
         {% endblock %}
         ```
     - Edit registration/login.html
-        ```
+        ```html
         <p><a href="{% url "password_reset" %}">Forgotten your password?</a></p>
         ```
     - pada core/settings.py, tambahkan setting email
-        ```
+        ```python
         EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
         ```
     - http://127.0.0.1:8000/account/login/, lalu coba 'forgotten your password'
     - Setelah fungsi reset berhasil, bisa mengganti semua auth.url pada account/urls menggunakan include (sama saja)
     - doc auth.url: https://github.com/django/django/blob/stable/3.0.x/django/contrib/auth/urls.py.
-        ```
+        ```python
         from django.urls import path, include
         # ...
         urlpatterns = [
@@ -476,7 +476,7 @@
 <a name="A31"></a>
 - User registration
     - Edit account/forms.py
-        ```
+        ```python
         class UserRegistrationForm(forms.ModelForm):
             password = forms.CharField(label='Password', widget=forms.PasswordInput)
             password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
@@ -498,7 +498,7 @@
         - cd = membersihkan field dari data input lama
         ```
     - Edit account/Views.py
-        ```
+        ```python
         from .forms import LoginForm, UserRegistrationForm
 
         def register(request):
@@ -526,11 +526,11 @@
         - views digunakan oleh --> template/account/register.html
         ```
     - Edit account/urls.py
-        ```
+        ```python
         path('register/', views.register, name='register'),
         ```
     - Buat template/account/register.html
-        ```
+        ```html
         {% extends "base.html" %}
         {% block title %}Create an account{% endblock %}
 
@@ -553,7 +553,7 @@
         ```
     - http://127.0.0.1:8000/account/register/
     - Edit registration/login.html
-        ```
+        ```html
         <p>Please, use the following form to log-in. If you don't have an account <a href="{% url "register" % ">register here</a></p>
         ```
         ```
@@ -564,7 +564,7 @@
 - Extending the user model
     - Edit account/models.py
         - docs: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#django.contrib.auth.get_user_model
-        ```
+        ```python
         from django.db import models
         from django.conf import settings
 
@@ -578,12 +578,12 @@
         ```
     - pip install Pillow
     - core/settings.py
-        ```
+        ```python
         MEDIA_URL = '/media/'
         MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
         ```
     - core/urls.py
-        ```
+        ```python
         from django.conf import settings
         from django.conf.urls.static import static
 
@@ -594,7 +594,7 @@
     - python manage.py makemigrations
     - python manage.py migrate
     - admin.py
-        ```
+        ```python
         from django.contrib import admin
         from .models import Profile
 
@@ -604,7 +604,7 @@
         ```
         - http://127.0.0.1:8000/admin/
     - account/forms.py
-        ```
+        ```python
         from .models import Profile
 
         class UserEditForm(forms.ModelForm):
@@ -617,7 +617,7 @@
                 fields = ('date_of_birth', 'photo')
         ```
     - views.py
-        ```
+        ```python
         from .models import Profile
 
         register()
@@ -628,7 +628,7 @@
             Profile.objects.create(user=new_user)
         ```
     - views.py
-        ```
+        ```python
         from .forms import ..., UserEditForm, ProfileEditForm
 
         @login_required
@@ -646,11 +646,11 @@
             return render(request,'account/edit.html',{'user_form': user_form,'profile_form': profile_form})
         ```
     - urls.py
-        ```
+        ```python
         path('edit/', views.edit, name='edit'),
         ```
     - Buat templates/account/edit.html
-        ```
+        ```html
         {% extends "base.html" %}
         {% block title %}Edit your account{% endblock %}
 
@@ -670,7 +670,7 @@
         - Buat user baru, http://127.0.0.1:8000/account/register/
         - Edit account, http://127.0.0.1:8000/account/edit/
     - account/dashboard.html, replace with the new one
-        ```
+        ```html
         <p>Welcome to your dashboard. You can <a href="{% url "edit" %}">edit
         your profile</a> or <a href="{% url "password_change" %}">change your
         password</a>.</p>
@@ -684,7 +684,7 @@
     - docs: https://docs.djangoproject.com/en/3.0/ref/contrib/messages/.
     - base.html
     - letakkan kode ini diantara div header dan content
-        ```
+        ```html
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
@@ -697,7 +697,7 @@
         {% endif %}
         ```
     - views.py --> edit()
-        ```
+        ```python
         from django.contrib import messages
 
         @login_required
@@ -723,7 +723,7 @@
 - docs: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#otherauthentication-sources
 
     - Buat account/authentication.py
-        ```
+        ```python
         from django.contrib.auth.models import User
 
         class EmailAuthBackend(object):
@@ -744,7 +744,7 @@
                     return None
         ```
     - settings.py
-        ```
+        ```python
         AUTHENTICATION_BACKENDS = [
         'django.contrib.auth.backends.ModelBackend',
         'account.authentication.EmailAuthBackend',
@@ -760,7 +760,7 @@
     - register di settings.py --> 'social_django',
     - python manage.py migrate
     - core/urls.py
-        ```
+        ```python
         path('social-auth/', include('social_django.urls', namespace='social')),
         ```
     - Ubah host menjadi dummy domain
@@ -784,12 +784,12 @@
 - Authentication using Facebook
     - tutorial video: https://www.youtube.com/watch?v=oAWUyg_PPLk
     - settings.py --> AUTHENTICATION_BACKENDS
-            ```
+            ```python
             'social_core.backends.facebook.FacebookOAuth2',
             ```
     - https://developers.facebook.com/apps/
     - settings.py
-            ```
+            ```python
             SOCIAL_AUTH_FACEBOOK_KEY = 'XXX' # Facebook App ID
             SOCIAL_AUTH_FACEBOOK_SECRET = 'XXX' # Facebook App Secret
             SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
@@ -797,7 +797,7 @@
     - masukkan http://mysite.com:8000/social-auth/complete/facebook/ pada OAuth Redirect URIs
     - account/registration/login.html
         - letakkan dibawah content
-            ```
+            ```html
                 <div class="social">
                 <ul>
                 <li class="facebook">
@@ -817,18 +817,18 @@
         - https://developers.google.com/identity/protocols/OAuth2
         
         - settings.py --> AUTHENTICATION_BACKENDS
-            ```
+            ```python
             'social_core.backends.google.GoogleOAuth2',
             ```
         - https://console.developers.google.com/apis/credentials
             - Authorised redirect URIs: Add https://aris.com:8000/social-auth/complete/google-oauth2/
         - settings.py
-            ```
+            ```python
             SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'XXX' # Google Consumer Key
             SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'XXX' # Google Consumer Secret
             ```
         - registration/login.html
-            ```
+            ```html
             <li class="google">
             <a href="{% url "social:begin" "google-oauth2" %}">Login with
             Google</a>
