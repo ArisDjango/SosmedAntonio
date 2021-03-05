@@ -119,7 +119,9 @@
         - login sementara menggunakan akun admin, Belum membahas registrasi user, itu akan dibahas di bab next
 
     - account/forms.py
+
         ```python
+
             from django import forms
 
             class LoginForm(forms.Form):
@@ -127,7 +129,9 @@
                 password = forms.CharField(widget=forms.PasswordInput)
         ```
     - account/views.py
+
         ```python
+
         from django.http import HttpResponse
         from django.shortcuts import render
         from django.contrib.auth import authenticate, login
@@ -153,7 +157,9 @@
 
         ```
     - account/urls.py
+
         ```python
+
         from django.urls import path
         from . import views
 
@@ -163,7 +169,9 @@
         ]
         ```
     - core/urls.py
+
         ```python
+
         from django.urls import path, include
         from django.contrib import admin
 
@@ -180,7 +188,9 @@
                 - base.html
         - Buat account/static/css/base.css
         - edit base.html
+
             ```html
+
             {% load static %}
             <!DOCTYPE html>
             <html>
@@ -200,7 +210,9 @@
             </html>
             ```
         - edit account/login.html
+
             ```html
+
             {% extends "base.html" %}
             {% block title %}Log-in{% endblock %}
 
@@ -239,15 +251,20 @@
 <a name="A23"></a>        
 - Login and logout views
     - Edit account/urls.py
+
         ```python
+
         from django.contrib.auth import views as auth_views
             ...
             # path('login/', views.user_login, name='login'),
             path('login/', auth_views.LoginView.as_view(), name='login'),
             path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+
         ```
     - Buat templates/registration/login.html
+
         ```html
+
         {% extends "base.html" %}
         {% block title %}Log-in{% endblock %}
 
@@ -274,7 +291,9 @@
         {% endblock %}
         ```
     - Buat templates/registration/logged_out.html
+
         ```html
+
         {% extends "base.html" %}
         {% block title %}Logged out{% endblock %}
 
@@ -287,17 +306,23 @@
         </p>
 
         {% endblock %}
+
         ```
     - Edit account/views.py
+
         ```python
+
         from django.contrib.auth.decorators import login_required
 
         @login_required
         def dashboard(request):
             return render(request,'account/dashboard.html',{'section': 'dashboard'})
+
         ```
     - Buat templates/account/dashboard.html
+
         ```html
+
         {% extends "base.html" %}
         {% block title %}Dashboard{% endblock %}
         {% block content %}
@@ -305,13 +330,19 @@
         <h1>Dashboard</h1>
         <p>Welcome to your dashboard.</p>
         {% endblock %}
+
         ```
     - Edit account/urls.py
+
         ```python
+
         path('', views.dashboard, name='dashboard'),
+
         ```
     - Edit core/settings.py
+
         ```python
+
         LOGIN_REDIRECT_URL = 'dashboard'
         LOGIN_URL = 'login'
         LOGOUT_URL = 'logout'
@@ -323,44 +354,51 @@
         • LOGOUT_URL: URL untuk user log out
         ```
     - Edit templates/base.html
-    ```html
-        <div id="header">
-            <span class="logo">Bookmarks</span>
-            {% if request.user.is_authenticated %}
-            <ul class="menu">
-                <li {% if section == 'dashboard' %}class='selected'{% endif %}>
-                    <a href="{% url 'dashboard' %}">My dashboard</a>
-                </li>
-                <li {% if section == 'images' %}class='selected'{% endif %}>
-                    <a href="#">Images</a>
-                </li>
-                    <li {% if section == 'people' %}class='selected'{% endif %}>
-                <a href="#">People</a>
-                </li>
-            </ul>
-            {% endif %}
-            <span class="user">
-            {% if request.user.is_authenticated %}
-                Hello {{ request.user.first_name }},
-                <a href="{% url 'logout' %}">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}">Log-in</a>
-            {% endif %}
-            </span>
-        </div>
-    ```
+
+        ```html
+
+            <div id="header">
+                <span class="logo">Bookmarks</span>
+                {% if request.user.is_authenticated %}
+                <ul class="menu">
+                    <li {% if section == 'dashboard' %}class='selected'{% endif %}>
+                        <a href="{% url 'dashboard' %}">My dashboard</a>
+                    </li>
+                    <li {% if section == 'images' %}class='selected'{% endif %}>
+                        <a href="#">Images</a>
+                    </li>
+                        <li {% if section == 'people' %}class='selected'{% endif %}>
+                    <a href="#">People</a>
+                    </li>
+                </ul>
+                {% endif %}
+                <span class="user">
+                {% if request.user.is_authenticated %}
+                    Hello {{ request.user.first_name }},
+                    <a href="{% url 'logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Log-in</a>
+                {% endif %}
+                </span>
+            </div>
+
+        ```
     - http://127.0.0.1:8000/account/login/
 
 <a name="A24"></a>
 - Changing password views
     - Edit account/urls.py
+
         ```python
+
             # change password urls
             path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
             path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),
         ```
     - Buat templates/registration/password_change_form.html
+
         ```html
+
         {% extends "base.html" %}
         {% block title %}Change your password{% endblock %}
         
@@ -375,7 +413,9 @@
         {% endblock %}
         ```
     - Buat templates/registration/password_change_done.html
+
         ```html
+
         {% extends "base.html" %}
         {% block title %}Password changed{% endblock %}
 
@@ -389,7 +429,9 @@
 <a name="A25"></a>
 - Resetting password views
     - Edit account/urls.py
+
         ```python
+
         # reset password urls
         path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
         path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
@@ -397,7 +439,9 @@
         path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
         ```
     - Buat file baru templates/registration/password_reset_form.html
+
         ```html
+
         {% extends "base.html" %}
         {% block title %}Reset your password{% endblock %}
 
@@ -412,13 +456,18 @@
         {% endblock %}
         ```
     - Buat file baru templates/registration/password_reset_email.html
+
         ```html
+
         Someone asked for password reset for email {{ email }}. Follow the link below:
         {{ protocol }}://{{ domain }}{% url "password_reset_confirm" uidb64=uid token=token %}
         Your username, in case you've forgotten: {{ user.get_username }}
+
         ```
     - Buat file baru templates/registration/password_reset_confirm.html
+
         ```html
+
         {% extends "base.html" %}
         {% block title %}Reset your password{% endblock %}
 
@@ -439,7 +488,9 @@
         {% endblock %}
         ```
     - Buat file baru templates/registration/password_reset_complete.html
+
         ```html
+
         {% extends "base.html" %}
         {% block title %}Password reset{% endblock %}
         {% block content %}
@@ -449,19 +500,28 @@
         <a href="{% url "login" %}">log in now</a></p>
 
         {% endblock %}
+
         ```
     - Edit registration/login.html
+
         ```html
+
         <p><a href="{% url "password_reset" %}">Forgotten your password?</a></p>
+
         ```
     - pada core/settings.py, tambahkan setting email
+
         ```python
+
         EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
         ```
     - http://127.0.0.1:8000/account/login/, lalu coba 'forgotten your password'
     - Setelah fungsi reset berhasil, bisa mengganti semua auth.url pada account/urls menggunakan include (sama saja)
     - doc auth.url: https://github.com/django/django/blob/stable/3.0.x/django/contrib/auth/urls.py.
+
         ```python
+
         from django.urls import path, include
         # ...
         urlpatterns = [
@@ -474,6 +534,7 @@
 - Saat ini user yang telah terdaftar di db(didaftarkan admin), bisa login, logout, merubah password, reset password. 
 - sekarang saatnya membuat anonymous visitor agar bisa membuat akun user.
 <a name="A31"></a>
+
 - User registration
     - Edit account/forms.py
         ```python
@@ -498,7 +559,9 @@
         - cd = membersihkan field dari data input lama
         ```
     - Edit account/Views.py
+
         ```python
+
         from .forms import LoginForm, UserRegistrationForm
 
         def register(request):
@@ -530,6 +593,7 @@
         path('register/', views.register, name='register'),
         ```
     - Buat template/account/register.html
+
         ```html
         {% extends "base.html" %}
         {% block title %}Create an account{% endblock %}
@@ -564,7 +628,9 @@
 - Extending the user model
     - Edit account/models.py
         - docs: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#django.contrib.auth.get_user_model
+
         ```python
+
         from django.db import models
         from django.conf import settings
 
@@ -578,12 +644,16 @@
         ```
     - pip install Pillow
     - core/settings.py
+
         ```python
+
         MEDIA_URL = '/media/'
         MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
         ```
     - core/urls.py
+
         ```python
+
         from django.conf import settings
         from django.conf.urls.static import static
 
@@ -593,8 +663,11 @@
         ```
     - python manage.py makemigrations
     - python manage.py migrate
+
     - admin.py
+
         ```python
+
         from django.contrib import admin
         from .models import Profile
 
@@ -603,8 +676,11 @@
             list_display = ['user', 'date_of_birth', 'photo']
         ```
         - http://127.0.0.1:8000/admin/
+
     - account/forms.py
+
         ```python
+
         from .models import Profile
 
         class UserEditForm(forms.ModelForm):
@@ -617,7 +693,9 @@
                 fields = ('date_of_birth', 'photo')
         ```
     - views.py
+
         ```python
+
         from .models import Profile
 
         register()
@@ -628,7 +706,9 @@
             Profile.objects.create(user=new_user)
         ```
     - views.py
+
         ```python
+
         from .forms import ..., UserEditForm, ProfileEditForm
 
         @login_required
@@ -646,11 +726,15 @@
             return render(request,'account/edit.html',{'user_form': user_form,'profile_form': profile_form})
         ```
     - urls.py
+
         ```python
+
         path('edit/', views.edit, name='edit'),
         ```
     - Buat templates/account/edit.html
+
         ```html
+
         {% extends "base.html" %}
         {% block title %}Edit your account{% endblock %}
 
@@ -670,7 +754,9 @@
         - Buat user baru, http://127.0.0.1:8000/account/register/
         - Edit account, http://127.0.0.1:8000/account/edit/
     - account/dashboard.html, replace with the new one
+
         ```html
+
         <p>Welcome to your dashboard. You can <a href="{% url "edit" %}">edit
         your profile</a> or <a href="{% url "password_change" %}">change your
         password</a>.</p>
@@ -684,7 +770,9 @@
     - docs: https://docs.djangoproject.com/en/3.0/ref/contrib/messages/.
     - base.html
     - letakkan kode ini diantara div header dan content
+
         ```html
+
         {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
@@ -697,7 +785,9 @@
         {% endif %}
         ```
     - views.py --> edit()
+
         ```python
+
         from django.contrib import messages
 
         @login_required
@@ -723,7 +813,9 @@
 - docs: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#otherauthentication-sources
 
     - Buat account/authentication.py
+
         ```python
+
         from django.contrib.auth.models import User
 
         class EmailAuthBackend(object):
@@ -744,7 +836,9 @@
                     return None
         ```
     - settings.py
+
         ```python
+
         AUTHENTICATION_BACKENDS = [
         'django.contrib.auth.backends.ModelBackend',
         'account.authentication.EmailAuthBackend',
@@ -760,13 +854,16 @@
     - register di settings.py --> 'social_django',
     - python manage.py migrate
     - core/urls.py
+
         ```python
+
         path('social-auth/', include('social_django.urls', namespace='social')),
         ```
     - Ubah host menjadi dummy domain
         - C:\Windows\System32\Drivers\etc\hosts
         - 127.0.0.1  aris.com
         - settings.py --> ALLOWED_HOSTS
+
             ```
             ALLOWED_HOSTS = ['aris.com', 'localhost', '127.0.0.1']
             ```
@@ -784,12 +881,17 @@
 - Authentication using Facebook
     - tutorial video: https://www.youtube.com/watch?v=oAWUyg_PPLk
     - settings.py --> AUTHENTICATION_BACKENDS
+
             ```python
+
             'social_core.backends.facebook.FacebookOAuth2',
+
             ```
     - https://developers.facebook.com/apps/
     - settings.py
+
             ```python
+
             SOCIAL_AUTH_FACEBOOK_KEY = 'XXX' # Facebook App ID
             SOCIAL_AUTH_FACEBOOK_SECRET = 'XXX' # Facebook App Secret
             SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
@@ -797,7 +899,9 @@
     - masukkan http://mysite.com:8000/social-auth/complete/facebook/ pada OAuth Redirect URIs
     - account/registration/login.html
         - letakkan dibawah content
+
             ```html
+
                 <div class="social">
                 <ul>
                 <li class="facebook">
@@ -817,18 +921,24 @@
         - https://developers.google.com/identity/protocols/OAuth2
         
         - settings.py --> AUTHENTICATION_BACKENDS
+
             ```python
+
             'social_core.backends.google.GoogleOAuth2',
             ```
         - https://console.developers.google.com/apis/credentials
             - Authorised redirect URIs: Add https://aris.com:8000/social-auth/complete/google-oauth2/
         - settings.py
+
             ```python
+
             SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'XXX' # Google Consumer Key
             SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'XXX' # Google Consumer Secret
             ```
         - registration/login.html
+
             ```html
+
             <li class="google">
             <a href="{% url "social:begin" "google-oauth2" %}">Login with
             Google</a>
@@ -838,39 +948,1068 @@
     
 <a name="B"></a>
 ## Chapter 5: Sharing Content on Your Website
+- Akan membahas:
+    • Membuat relasi databse many-to-many 
+    • Custom behavior untuk forms
+    • Menggunakan jQuery dengan Django
+    • Membuat jQuery bookmarklet
+    • image thumbnails menggunakan easy-thumbnails
+    • Implementasi AJAX views dan mengintegrasikan dengan jQuery
+    • Membuat custom decorators untuk views
+    • menggunakan AJAX pagination
 <a name="B1"></a>
 ### Creating an image bookmarking website
+- Tujuan:
+    1. Membuat model untuk menyimpan image beserta informasinya
+    2. Membuat form dan view untuk menghandle image upload
+    3. Membuat sistem untuk users agar bisa melakukan post images yang didapatkan/di bookmarks dari website lain
+- Membuat app baru didalam bookmarks directory --> images
+    - `django-admin startapp images `
+- registrasi di settings.py
+    ```
+    INSTALLED_APPS = [
+    # ...
+    'images.apps.ImagesConfig',
+    ]
+    ```
+
 <a name="B11"></a>
 - Building the image model
+    - Edit images/models.py
+
+        ```py
+
+        from django.db import models
+        from django.conf import settings
+
+        class Image(models.Model):
+            user = models.ForeignKey(settings.AUTH_USER_MODEL,related_name='images_created',on_delete=models.CASCADE)
+            title = models.CharField(max_length=200)
+            slug = models.SlugField(max_length=200,blank=True)
+            url = models.URLField()
+            image = models.ImageField(upload_to='images/%Y/%m/%d/')
+            description = models.TextField(blank=True)
+            created = models.DateField(auto_now_add=True,db_index=True)
+
+        ```
+        ```
+        - Note:
+            - slug: label agar URL terlihat SEO-friendly.
+            - url: original URL untuk image.
+
+        - Database index meningkatkan performa query. pertimbangkan menggunakan db_index=True untuk fields dimana query menggunakan filter(), exclude(), atau order_by().ForeignKey fields atau fields dengan unique=True mengindikasikan pembuatan index.
+
+        - Juga bisa menggunakan Meta.index_together atau Meta.indexes untuk membuat index pada multiple fields.
+
+        - Docs database index: https://docs.djangoproject.com/en/3.0/ref/models/options/#django.db.models.Options.indexes.
+
+        ```
+    - menggunakan slugify()
+        - Fungsi:
+            - Menciptakan slug, agar url lebih enak dibaca
+            - slug tercipta otomatis dari input title
+        - masih pada model, tambahkan:
+
+        ```python
+
+            from django.utils.text import slugify
+
+            class Image(models.Model):
+                # ...
+                def save(self, *args, **kwargs):
+                if not self.slug:
+                    self.slug = slugify(self.title)
+                super().save(*args, **kwargs)
+        ```
+
 <a name="B12"></a>
 - Creating many-to-many relationships
+    - Tujuan:
+        - Docs : https://docs.djangoproject.com/en/3.0/topics/db/examples/many_to_many/.
+        - Membuat field baru pada model untuk menyimpan users yang me-like image.
+        - Membutuhkan relasi many-to-many karena user bisa me-like multiple images dan setiap image bisa di like oleh multiple user
+    - edit models.py
+
+        ```python
+
+        users_like = models.ManyToManyField(settings.AUTH_USER_MODEL,
+                                            related_name='images_liked',
+                                            blank=True)
+        ```
+        ```
+        Note:
+        - ManyToManyField --> menciptakan *join table* mengunakan primary keys dari kedua models.
+
+        - ManyToManyField bisa didefiniskan pada salah satu field models.
+
+        - related_name attribute memberikan nama relationship. - ManyToManyField fields menyediakan many-to-many manager yang memungkinkan mengambil objects, seperti image.users_like.all(), atau dari user object, seperti user.images_liked.all().
+        ```
+    - python manage.py makemigrations images
+    - python manage.py migrate images
 <a name="B13"></a>
 - Registering the image model in the administration site
+    - Edit admin.py
+
+        ```python
+        
+        from django.contrib import admin
+        from .models import Image
+        @admin.register(Image)
+        class ImageAdmin(admin.ModelAdmin):
+            list_display = ['title', 'slug', 'image', 'created']
+            list_filter = ['created']
+        ```
+    - Run server menggunakan https
+        ```
+        python manage.py runserver_plus --cert-file cert.crt
+        ```
+    - https://127.0.0.1:8000/admin/
+
 <a name="B2"></a>
 ### Posting content from other websites
+- Tujuan:
+    - Bookmark/grab image dari website lain dan otomatis membuat 'image object' baru di database
+    - User menyediakan URL image, title, description(optional)
+- Membuat Form untuk submit image
+    - Buat images/forms.py
+
+        ```python
+
+        from django import forms
+        from .models import Image
+
+        class ImageCreateForm(forms.ModelForm):
+            class Meta:
+                model = Image
+                fields = ('title', 'url', 'description')
+                widgets = {
+                    'url': forms.HiddenInput,
+                }
+        ```
+        ```
+        Note:
+        - Dari model ditransformasi menjadi ModelForm
+        - untuk fields 'url' nantinya otomatis didapatkan ketika proses bookmarks image (menggunakan javascript), dan akan26 mengambil url sebagai parameternya
+        - pada html, form 'url' di sembunyikan menggunakan HiddenInput
+        ```
+
+
 <a name="B21"></a>
 - Cleaning form fields
+    - Tujuan :
+        - Memastikan url image yang diambil adalah url berakhiran 'jpeg'
+    - Tambahkan pada ImageCreateForm()
+
+        ```python
+            def clean_url(self):
+                url = self.cleaned_data['url']
+                valid_extensions = ['jpg', 'jpeg']
+                extension = url.rsplit('.', 1)[1].lower()
+                if extension not in valid_extensions:
+                    raise forms.ValidationError('The given URL does not ' \
+                    'match valid image extensions.')
+                return url
+        ```
+        ```
+        Note:
+            cleaned_data perlu dipelajari
+        ```
 <a name="B22"></a>
 - Overriding the save() method of a ModelForm
+    - Tujuan:
+        - pada model form, menggunakan save() untuk menyimpan  model instance ke database dan me return object.
+        - selanjutnya menerima commit, jika false, maka save() akan mereturn model instance namun tidak disimpan di database
+        - overide save() pada form agar bisa mengambil image dan menyimpannya
+
+    - Pada forms.py:
+
+    ```python
+    from urllib import request
+    from django.core.files.base import ContentFile
+    from django.utils.text import slugify
+
+    def save(self, force_insert=False, force_update=False, commit=True):
+        image = super().save(commit=False)
+        image_url = self.cleaned_data['url']
+        name = slugify(image.title)
+        extension = image_url.rsplit('.', 1)[1].lower()
+        image_name = f'{name}.{extension}'
+        # download image from the given URL
+        response = request.urlopen(image_url)
+        image.image.save(image_name,
+                        ContentFile(response.read()),
+                        save=False)
+        if commit:
+            image.save()
+        return image
+    ```
+    ```
+    Kita sedang mengoveride save() method, dengan parameters yang dibutuhkan oleh ModelForm.
+
+    Penjelasan:
+    1. membuat image instance baru dengan cara memanggil save() method pada form dengan parameter commit=False.
+    
+    2. Mendapatkan URL dari cleaned_data dictionary pada form.
+
+    3. Mendapatkan nama image dengan mengkombinasikan  image title slug dengan original file extension.
+
+    4. Menggunakan Python urllib untuk mendownload image lalu memanggil save() method pada image field, meneruskannya ke ContentFile object yang terinstansiasi dengan file content yang telah terdownload. dengan cara ini, kita menyimpan file ke media directory project. kita meneruskan save=False parameter untuk menghindari menyimpan object kle database
+
+    5. untuk mempertahankan behavior yang sama seperti save() method yang kita override, kita menyimpan form ke database hanya jika commit parameter = True.
+
+    dalam menggunakan urllib untuk mengambil images dari URLs dengan HTTPS, harus menginstall Certifi Python package. Certifi adalah koleksi dari root certificates untuk memvalidasi SSL/TLS certificates.
+
+    pip install --upgrade certifi
+
+    ```
+    - Edit Images/Views.py
+
+    ```python
+    from django.shortcuts import render, redirect
+    from django.contrib.auth.decorators import login_required
+    from django.contrib import messages
+    from .forms import ImageCreateForm
+
+    @login_required
+    def image_create(request):
+        if request.method == 'POST':
+        # form is sent
+            form = ImageCreateForm(data=request.POST)
+            if form.is_valid():
+                # form data is valid
+                cd = form.cleaned_data
+                new_item = form.save(commit=False)
+                # assign current user to the item
+                new_item.user = request.user
+                new_item.save()
+                messages.success(request, 'Image added successfully')
+                # redirect to new created item detail view
+                return redirect(new_item.get_absolute_url())
+        else:
+            # build form with data provided by the bookmarklet via GET
+            form = ImageCreateForm(data=request.GET)
+        return render(request,'images/image/create.html',{'section': 'images','form': form})
+    ```
+    ```
+    Note:
+
+    Menggunakan decorator login_required untuk image_create view untuk menghindari access dari users yang tidak terotentifikasi.
+
+    1. mendapatkan data via GET untuk membuat instance pada form. data yang diambil adalah url dan title pada image form yang diambil dari external website dan akan dilakukan via GET dengan JavaScript tool yang nanti akan kita buat. saat ini asumsikan saja ada.
+
+    2. jika form tersubmit, akan dicek validitasnya. jika form data valid, maka akan membuat Image instance baru.
+    Untuk mencegah object langsung tersimpan di db, maka save() pada form menggunakan atribut 'commit=False'
+
+    3. mengunakan user aktif ke image object baru. dengan begini kita akan tahu siapa yang upload image.
+
+    4. menyimpan image object ke database.
+
+    5. Terakhir, menampilkan pesan sukses menggunakan django messaging framework dan redirect user ke URL pada image. saat ini kita belum membuat get_absolute_url
+    ```
+
+    - Membuat image/urls.py
+
+    ```python
+    
+    from django.urls import path
+    from . import views
+
+    app_name = 'images'
+
+    urlpatterns = [
+        path('create/', views.image_create, name='create'),
+    ]
+    ```
+
+    - Edit core/urls.py
+
+        ```python
+
+        urlpatterns = [
+        path('admin/', admin.site.urls),
+        path('account/', include('account.urls')),
+        path('social-auth/', include('social_django.urls', namespace='social')),
+        path('images/', include('images.urls', namespace='images')),
+        ]
+
+        ```
+        ```
+        Note: Menambahkan path images
+        ```
+    - Templates
+        - Buat templates/images/image/create.html
+
+        ```html
+
+        {% extends "base.html" %}
+        {% block title %}Bookmark an image{% endblock %}
+        {% block content %}
+
+        <h1>Bookmark an image</h1>
+            <img src="{{ request.GET.url }}" class="image-preview">
+        <form method="post">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <input type="submit" value="Bookmark it!">
+        </form>
+
+        {% endblock %}
+        ```
+    - `python manage.py runserver_plus --cert-file cert.crt`
+    - sebagai contoh untuk mengetes fungsional, coba akses `https://127.0.0.1:8000/images/create/?title=%20Django%20and%20Duke&url=https://upload.wikimedia.org/wikipedia/commons/8/85/Django_Reinhardt_and_Duke_Ellington_%28Gottlieb%29.jpg.`
+    - Buka https://127.0.0.1:8000/admin/images/image/ , untuk memastikan ada image baru yang terimpan
+    
+
 <a name="B23"></a>
 - Building a bookmarklet with jQuery
+    - Tujuan:
+        - A bookmarklet is a bookmark stored in a web browser that contains JavaScript code to extend the browser's functionality. When you click on the bookmark, the JavaScript code is executed on the website being displayed in the browser. This is very useful for building tools that interact with other websites.
+        - Let's create a bookmarklet in a similar way for your website, using jQuery. official website: https://jquery.com/.
+        - Cara pengunaan bookmarklet
+            - drag button link bookmark ke browser tab
+            - Kunjungi web yang mengandung image dan klik pada bookmarklet di tab browser tadi
+    - Buat images/templates/bookmarklet_launcher.js
+
+        ```js
+
+        (function(){
+        if (window.myBookmarklet !== undefined){
+        myBookmarklet();
+        }
+        else {
+        document.body.appendChild(document.createElement('script')).
+        src='https://127.0.0.1:8000/static/js/bookmarklet.js?r='+Math.
+        floor(Math.random()*99999999999999999999);
+        }
+        })();
+        
+        ```
+    - Edit account/dashboard.html
+
+        ```html
+
+        {% extends "base.html" %}
+        {% block title %}Dashboard{% endblock %}
+        {% block content %}
+
+        <h1>Dashboard</h1>
+
+        {% with total_images_created=request.user.images_created.count%}
+            <p>Welcome to your dashboard. You have bookmarked {{ total_images_created }} image{{ total_images_created|pluralize }}.</p>
+        {% endwith %}
+
+        <p>Drag the following button to your bookmarks toolbar to bookmark images from other websites → <a href="javascript:{% include "bookmarklet_launcher.js" %}" class="button">Bookmark it</a></p>
+
+        <p>You can also <a href="{% url "edit" %}">edit your profile</a>
+        or <a href="{% url "password_change" %}">change your password</a>.</p>
+
+        {% endblock %}
+        ```
+        ```
+        Note:
+        
+            - The dashboard now displays the total number of images bookmarked by the user.You use the {% with %} template tag to set a variable with the total number of images bookmarked by the current user.
+
+            -  You include a link with an href attribute that contains the bookmarklet launcher script. You will include this JavaScript code from the bookmarklet_launcher.js template.
+        ```
+    - https://127.0.0.1:8000/account/
+
+    - Buat file static untuk images
+        - images/static/css/bookmarklet.css
+        - images/static/js/bookmarklet.js
+
+        ```js
+        (function(){
+            var jquery_version = '3.4.1';
+            var site_url = 'https://127.0.0.1:8000/';
+            var static_url = site_url + 'static/';
+            var min_width = 100;
+            var min_height = 100;
+
+            function bookmarklet(msg) {
+                // Here goes our bookmarklet code
+                    // load CSS
+                var css = jQuery('<link>');
+                css.attr({
+                    rel: 'stylesheet',
+                    type: 'text/css',
+                    href: static_url + 'css/bookmarklet.css?r=' + Math.floor(Math.random()*99999999999999999999)
+                });
+                jQuery('head').append(css);
+
+                // load HTML
+                box_html = '<div id="bookmarklet"><a href="#" id="close">&times;</a><h1>Select an image to bookmark:</h1><div class="images"></div></div>';
+                jQuery('body').append(box_html);
+
+                // close event
+                jQuery('#bookmarklet #close').click(function(){
+                jQuery('#bookmarklet').remove();
+                });
+                // find images and display them
+                jQuery.each(jQuery('img[src$="jpg"]'), function(index, image) {
+                    if (jQuery(image).width() >= min_width && jQuery(image).height()
+                >= min_height)
+                {
+                    image_url = jQuery(image).attr('src');
+                    jQuery('#bookmarklet .images').append('<a href="#"><img src="'+
+                    image_url +'" /></a>');
+                }
+                });
+
+                // when an image is selected open URL with it
+                jQuery('#bookmarklet .images a').click(function(e){
+                selected_image = jQuery(this).children('img').attr('src');
+                // hide bookmarklet
+                jQuery('#bookmarklet').hide();
+                // open new window to submit the image
+                window.open(site_url +'images/create/?url='
+                            + encodeURIComponent(selected_image)
+                            + '&title='
+                            + encodeURIComponent(jQuery('title').text()),
+                            '_blank');
+                });
+
+            };
+
+
+                // Check if jQuery is loaded
+                if(typeof window.jQuery != 'undefined') {
+                    bookmarklet();
+                } else {
+                    // Check for conflicts
+                    var conflict = typeof window.$ != 'undefined';
+                    // Create the script and point to Google API
+                    var script = document.createElement('script');
+                    script.src = '//ajax.googleapis.com/ajax/libs/jquery/' +
+                    jquery_version + '/jquery.min.js';
+                    // Add the script to the 'head' for processing
+                    document.head.appendChild(script);
+                    // Create a way to wait until script loading
+                    var attempts = 15;
+                    (function(){
+                    // Check again if jQuery is undefined
+                    if(typeof window.jQuery == 'undefined') {
+                        if(--attempts > 0) {
+                        // Calls himself in a few milliseconds
+                        window.setTimeout(arguments.callee, 250)
+                        } else {
+                        // Too much attempts to load, send error
+                        alert('An error occurred while loading jQuery')
+                        }
+                    } else {
+                        bookmarklet();
+                    }
+                    })();
+                }
+                })()
+        ```
+        ```
+        Note:
+            - You add an event that removes your HTML from the document when the user clicks on the close link of your HTML block.
+
+            - You use the #bookmarklet #close selector to find the HTML element with an ID named close, which has a parent element with an ID named bookmarklet. jQuery selectors allow you to find HTML elements. A jQuery selector returns all elements found by the given CSS selector.
+            
+            - You can find a list of jQuery selectors at https:// api.jquery.com/category/selectors/.
+        ```
+    - `python manage.py runserver_plus --cert-file cert.crt`
+
 <a name="B3"></a>
 ### Creating a detail view for images
+- Membuat view untuk tampilan detail images
+- images/views.py
+
+    ```python
+    from django.shortcuts import get_object_or_404
+    from .models import Image
+
+    def image_detail(request, id, slug):
+        image = get_object_or_404(Image, id=id, slug=slug)
+        return render(request,
+        'images/image/detail.html',
+        {'section': 'images',
+        'image': image})
+        
+    ```
+- images/urls.py
+
+    ```python
+    path('detail/<int:id>/<slug:slug>/',views.image_detail,name='detail'),
+    ```
+- images/models.py
+    ```python
+    from django.urls import reverse
+
+    class Image(models.Model):
+        # ...
+        def get_absolute_url(self):
+            return reverse('images:detail', args=[self.id, self.slug])
+    ```
+    ```
+    Note:
+    - add get_absolute_url()
+
+    - Remember that the common pattern for providing canonical URLs for objects is to define a get_absolute_url() method in the model.
+    ```
+- Buat Templates/images/image/detail.html
+
+    ```html
+    {% extends "base.html" %}
+    {% block title %}{{ image.title }}{% endblock %}
+
+    {% block content %}
+
+        <h1>{{ image.title }}</h1>
+        <img src="{{ image.image.url }}" class="image-detail">
+        {% with total_likes=image.users_like.count %}
+        <div class="image-info">
+            <div>
+                <span class="count">    
+                {{ total_likes }} like{{ total_likes|pluralize }}
+                </span>
+            </div>
+            {{ image.description|linebreaks }}
+        </div>
+        <div class="image-likes">
+            {% for user in image.users_like.all %}
+            <div>
+                <img src="{{ user.profile.photo.url }}">
+                <p>{{ user.first_name }}</p>
+            </div>
+            {% empty %}
+                Nobody likes this image yet.
+            {% endfor %}
+        </div>
+
+        {% endwith %}
+    {% endblock %}
+    ```
+    ```
+    Note:
+    - This is the template to display the detail view of a bookmarked image.
+    - You make use of the {% with %} tag to store the result of the QuerySet, counting all user likes in a new variable called total_likes. By doing so, you avoid evaluating the same QuerySet twice.
+    - You also include the image description and iterate over image. users_like.all to display all the users who like this image.
+
+    "Whenever you need to repeat a query in your template, use the {% with %} template tag to avoid additional database queries."
+    ```
+- Next, bookmark a new image using the bookmarklet. You will be redirected to the image detail page after you post the image. The page will include a success message.
 <a name="B4"></a>
 ### Creating image thumbnails using easy-thumbnails
+- Tujuan:
+    - You are displaying the original image on the detail page, but dimensions fordifferent images may vary considerably.
+    - Also, the original files for some images may be huge, and loading them might take too long.
+    - The best way to display optimized images in a uniform way is to generate thumbnails. Let's use a Django application called easy-thumbnails for this purpose.
+
+- `pip install easy-thumbnails==2.7`
+
+- pada settings.py
+
+    ```conf
+    INSTALLED_APPS = [
+    # ...
+    'easy_thumbnails',
+    ]
+    ```
+- `python manage.py migrate`
+- Edit images/image/detail.html
+    ```html
+    dari
+    <img src="{{ image.image.url }}" class="image-detail">
+
+    menjadi
+
+    {% load thumbnail %}
+    <a href="{{ image.image.url }}">
+        <img src="{% thumbnail image.image 300x0 %}" class="image-detail">
+    </a>
+    ```
+    ```
+    Note:
+    - The thumbnail is stored in the same directory of the original file. The location is defined by the MEDIA_ROOT setting and the upload_to attribute of the image field of the Image model.
+
+    - To set the highest JPEG quality, you can use the value 100 like this {% thumbnail image.image 300x0 quality=100 %}.
+
+    - The easy-thumbnails application offers several options to customize your thumbnails, including cropping algorithms and different effects that can be applied.
+
+    - If you have any difficulty generating thumbnails, you can add THUMBNAIL_DEBUG = True to the settings.py file in order to obtain debug information.
+
+    - You can read the full documentation of easy-thumbnails at https://easy-thumbnails.readthedocs.io/.
+    ```
+
 <a name="B5"></a>
 ### Adding AJAX actions with jQuery
+- Tujuan:
+    - LIKE / UNLIKE BUTTON
+    - You are going to add a link to the image detail page to let users click on it in order to like an image. You will perform this action with an AJAX call to avoid reloading the whole page.
+    - AJAX comes from Asynchronous JavaScript and XML, encompassing a group of techniques to make asynchronous HTTP requests.
+    - It consists of sending and retrieving data from the server asynchronously, without reloading the whole page.
+    - You can send or retrieve data in other formats, such as JSON, HTML, or plain text.
+- images/views.py --> users to like/unlike images
+
+    ```python
+    from django.http import JsonResponse
+    from django.views.decorators.http import require_POST
+
+    @login_required
+    @require_POST
+    def image_like(request):
+        image_id = request.POST.get('id')
+        action = request.POST.get('action')
+        if image_id and action:
+            try:
+                image = Image.objects.get(id=image_id)
+                if action == 'like':
+                    image.users_like.add(request.user)
+                else:
+                    image.users_like.remove(request.user)
+                return JsonResponse({'status':'ok'})
+            except:
+                pass
+        return JsonResponse({'status':'error'})
+    ```
+    ```
+    Note:
+    - The login_required decorator --> prevents users who are not logged in from accessing this view.
+
+    - The require_POST decorator --> returns an HttpResponseNotAllowed object (status code 405) if the HTTP request is not done via POST. This way, you only allow POST requests for this view.
+        " Django also provides a require_GET decorator --> to only allow GET requests and a require_http_methods decorator to which you can pass a list of allowed methods as an argument."
+
+    - In this view, you use two POST parameters:
+        • image_id: The ID of the image object on which the user is performing the action
+        • action: The action that the user wants to perform, which you assume to be a string with the value like or unlike
+
+    - You use the manager provided by Django for the users_like many-to-many field of the Image model in order to add or remove objects from the relationship using the add() or remove() methods.
+        • add() --> passing an object that is already present in the related object set, does not duplicate it.
+        • remove() --> passing an object that is not in the related object set does nothing.
+        • Another useful method of many-to-many managers is clear(), which removes all objects from the related object set.
+
+    - JsonResponse() --> class provided by Django, which returns an HTTP response with an application/json content type, converting the given object into a JSON output.
+    ```
+- Edit the images/urls.py
+    ```
+    path('like/', views.image_like, name='like'),
+    ```
 <a name="B51"></a>
 - Loading jQuery
+- Tujuan : 
+    - You will need to add the AJAX functionality to your image detail template.
+- Edit account/templates/base.html
+    - include the following code before the closing `</body>` HTML tag:
+
+    ```js
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
+    <script>
+        $(document).ready(function(){
+            {% block domready %}
+            {% endblock %}
+        });
+    </script>
+
+    ```
+    ```
+    Note:
+    - You load the jQuery framework from Google's CDN. You can also download jQuery from https://jquery.com/ and add it to the static directory of your application instead.
+
+    - $(document).ready()
+        - is a jQuery function that takes a handler that is executed when the Document Object Model (DOM) hierarchy has been fully constructed.
+
+        - The DOM is created by the browser when a web page is loaded, and it is constructed as a tree of objects.
+
+        - By including your code inside this function, you will make sure that all HTML elements that you are going to interact with are loaded in the DOM. Your code will only be executed once the DOM is ready.
+
+    - Inside the document-ready handler function
+        - you include a Django template block called domready, in which templates that extend the base template will be able to include specific JavaScript.
+
+        - The Django template language is rendered on the server side, outputting the final HTML document, and JavaScript is executed on the client side.
+
+        - In some cases, it is useful to generate JavaScript code dynamically using Django, to be able to use the results of QuerySets or server-side calculations to define variables in JavaScript.
+
+        - The examples in this chapter include JavaScript code in Django templates. The preferred way to include JavaScript code is by loading .js files, which are served as static files, especially when they are large scripts.
+    ```
 <a name="B52"></a>
 - Cross-site request forgery in AJAX requests
+    - Tujuan:
+        - Docs CSRF protection and AJAX : https://docs.djangoproject.com/en/3.0/ref/csrf/#ajax.
+        - With CSRF protection active, Django checks for a CSRF token in all POST requests.
+        - When you submit forms, you can use the {% csrf_token %} template tag to send the token along with the form.
+        - However, it is a bit inconvenient for AJAX requests to pass the CSRF token as POST data with every POST request.
+        - Therefore, Django allows you to set a custom X-CSRFToken header in your AJAX requests with the value of the CSRF token. This enables you to set up jQuery or any other JavaScript library to automatically set the X-CSRFToken header in every request.
+        - In order to include the token in all requests, you need to take the following steps:
+            1. Retrieve the CSRF token from the csrftoken cookie, which is set if CSRF protection is active
+            2. Send the token in the AJAX request using the X-CSRFToken header
+    - Edit base.html
+
+        ```js
+
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
+            <script>
+            var csrftoken = Cookies.get('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+                    }
+            $.ajaxSetup({
+                    beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                        }
+                    }
+                });
+            $(document).ready(function(){
+                {% block domready %}
+                {% endblock %}
+            });
+            </script>
+
+        ```
+        ```
+        Note:
+        1. You load the JS Cookie plugin from a public CDN so that you can easily interact with cookies. JS Cookie is a lightweight JavaScript API for handling cookies. You can learn more about it at https://github.com/js-cookie/js-cookie.
+
+        2. You read the value of the csrftoken cookie with Cookies.get().
+
+        3. You define the csrfSafeMethod() function to check whether an HTTP method is safe. Safe methods don't require CSRF protection—these are GET, HEAD, OPTIONS, and TRACE.
+
+        4. You set up jQuery AJAX requests using $.ajaxSetup(). Before each AJAX request is performed, you check whether the request method is safe and that the current request is not cross-domain.
+        If the request is unsafe, you set the X-CSRFToken header with the value obtained from the cookie. This setup will apply to all AJAX requests performed with jQuery.
+
+        The CSRF token will be included in all AJAX requests that use unsafe HTTP methods, such as POST or PUT.
+        ```
 <a name="B53"></a>
 - Performing AJAX requests with jQuery
+    - Edit template/images/image/detail.html
+
+        ```
+        Rubah line ini ---
+        {% with total_likes=image.users_like.count %}
+
+        dengan ini ---
+        {% with total_likes=image.users_like.count users_like=image.users_like.all %}
+
+        ```
+    - Replace
+
+        ```
+        {% for user in image.users_like.all %}
+
+        with the following one:
+        
+        {% for user in users_like %}
+        ```
+    - Then, modify the <div> element with the image-info class as follows:
+
+    ```html
+    <div class="image-info">
+        <div>
+        <span class="count">
+            <span class="total">{{ total_likes }}</span>
+            like{{ total_likes|pluralize }}
+        </span>
+        <a href="#" data-id="{{ image.id }}" data-action="{% if request.user in users_like %}un{% endif %}like"
+        class="like button">
+            {% if request.user not in users_like %}
+                Like
+            {% else %}
+                Unlike
+            {% endif %}
+        </a>
+        </div>
+            {{ image.description|linebreaks }}
+    </div>
+    ```
+    ```
+    Note:
+    - First, you add another variable to the {% with %} template tag in order to store the results of the image users_like.all query and avoid executing it twice.
+
+    - You use the variable for the for loop that iterates over the users that like this image.
+
+    - You display the total number of users who like the image and include a link to like/unlike the image.
+
+    - You check whether the user is in the related object set of users_like to display either like or unlike, based on the current relationship between the user and this image.
+
+    - You add the following attributes to the <a> HTML element:
+        • data-id: The ID of the image displayed.
+        • data-action: The action to run when the user clicks on the link. This can be like or unlike.
+    
+        " Any attribute on any HTML element whose attribute name starts with data- is a data attribute. Data attributes are used to store custom data for your application. "
+
+    - You will send the value of both attributes in the AJAX request to the image_like view.
+    --> When a user clicks on the like/unlike link, you will perform the following actions on the client side:
+        1. Call the AJAX view, passing the image ID and the action parameters to it
+        2. If the AJAX request is successful, update the data-action attribute of the <a> HTML element with the opposite action (like / unlike), and modify its display text accordingly
+        3. Update the total number of likes that is displayed
+
+
+    ```
+- templates/images/image/detail.html
+    - Tambahkan {%domready%}
+
+    ```js
+
+    {% block domready %}
+        $('a.like').click(function(e){
+            e.preventDefault();
+            $.post('{% url "images:like" %}',
+            {
+                id: $(this).data('id'),
+                action: $(this).data('action')
+            },
+            function(data){
+                if (data['status'] == 'ok')
+                {
+                    var previous_action = $('a.like').data('action');
+                    // toggle data-action
+                    $('a.like').data('action', previous_action == 'like' ?
+                    'unlike' : 'like');
+                    // toggle link text
+                    $('a.like').text(previous_action == 'like' ? 'Unlike' : 'Like');
+                    // update total likes
+                    var previous_likes = parseInt($('span.count .total'). text());
+                    $('span.count .total').text(previous_action == 'like' ? previous_likes + 1 : previous_likes - 1);
+                }
+            }
+    );
+    });
+    {% endblock %}
+    ```
+    ```
+    Note:
+    1. You use the $('a.like') jQuery selector to find all <a> elements of the HTML document with the like class.
+
+    2. You define a handler function for the click event. This function will be executed every time the user clicks on the like/unlike link.
+
+    3. Inside the handler function, you use e.preventDefault() to avoid the default behavior of the <a> element. This will prevent the link from taking you anywhere.
+
+    4. You use $.post() to perform an asynchronous POST request to the server. jQuery also provides a $.get() method to perform GET requests and a lowlevel $.ajax() method.
+
+    5. You use Django's {% url %} template tag to build the URL for the AJAX request.
+
+    6. You build the POST parameters dictionary to send in the request. The parameters are the ID and action parameters expected by your Django view. You retrieve these values from the <a> element's data-id and data-action attributes.
+
+    7. You define a callback function that is executed when the HTTP response is received; it takes a data attribute that contains the content of the response.
+
+    8. You access the status attribute of the data received and check whether it equals ok. If the returned data is as expected, you toggle the data-action attribute of the link and its text. This allows the user to undo their action.
+
+    9. You increase or decrease the total likes count by one, depending on the action performed.
+    ```
+- Masuk ke detail page, coba tombol like/unlike apakah berhasil
+- Saat menggunakan JavaScript, terutama operasi AJAX requests direkomendasikan menggunakan tool untuk debugging JavaScript dan HTTP requests. gunakan Inspect Element untuk mengakses web developer tools.
+
 <a name="B6"></a>
 ### Creating custom decorators for your views
+- Tujuan:
+    - Let's restrict your AJAX views to allow only requests generated via AJAX.
+        - The Django request object provides an is_ajax() method that checks whether the request is being made with XMLHttpRequest, which means that it is an AJAX request.
+        - This value is set in the HTTP_X_REQUESTED_WITH HTTP header, which is
+        included in AJAX requests by most JavaScript libraries.
+    - you will create a decorator for checking the HTTP_X_REQUESTED_WITH header in your views.
+        - A decorator is a function that takes another function and extends the behavior of the latter without explicitly modifying it.
+        - If the concept of decorators is foreign to you, you might want to take a look at https://www.python.org/dev/peps/pep-0318/ before you continue reading.
+        - Since your decorator will be generic and could be applied to any view, you will create a common Python package in your project.
+- Buat directory berikut:
+
+    ```
+    common/
+        __init__.py
+        decorators.py
+    ```
+- Edit the decorators.py
+    ```py
+    from django.http import HttpResponseBadRequest
+
+    def ajax_required(f):
+        def wrap(request, *args, **kwargs):
+            if not request.is_ajax():
+                return HttpResponseBadRequest()
+            return f(request, *args, **kwargs)
+        wrap.__doc__=f.__doc__
+        wrap.__name__=f.__name__
+        return wrap
+    ```
+    ```
+    Note:
+    - code is your custom ajax_required decorator.
+    - It defines a wrap function that returns an HttpResponseBadRequest object (HTTP 400 code) if the request is not AJAX. Otherwise, it returns the decorated function.
+    ```
+- Edit images/views.py
+    - Tambahkan decorator diatas, ke image_like AJAX view:
+    ```
+    from common.decorators import ajax_required
+
+    @ajax_required
+    @login_required
+    @require_POST
+    def image_like(request):
+        # ...
+    ```
+- https://127.0.0.1:8000/images/like/ maka akan mendapatkan HTTP 400 response.
+- Build custom decorators for your views if you find that you are
+repeating the same checks in multiple views.
 <a name="B7"></a>
 ### Adding AJAX pagination to your list views
+- Tujuan:
+    - you need to list all bookmarked images on your website.
+    - You will use AJAX pagination to build an infinite scroll functionality. Infinite scroll is achieved by loading the next results automatically when the user scrolls to the bottom of the page.
+- view image_list()
+    - image list view that will handle both standard browser requests and AJAX requests, including pagination.
+    - When the user initially loads the image list page, you will display the first page of images.
+    - When they scroll to the bottom of the page, you will load the following page of items via AJAX and append it to the bottom of the main page.
+    - The same view will handle both standard and AJAX pagination.
+- Edit images/views.py
 
+    ```py
+
+    from django.http import HttpResponse
+    from django.core.paginator import Paginator, EmptyPage, \
+    PageNotAnInteger
+
+    @login_required
+    def image_list(request):
+        images = Image.objects.all()
+        paginator = Paginator(images, 8)
+        page = request.GET.get('page')
+        try:
+            images = paginator.page(page)
+        except PageNotAnInteger:
+            # If page is not an integer deliver the first page
+            images = paginator.page(1)
+        except EmptyPage:
+            if request.is_ajax():
+                # If the request is AJAX and the page is out of range
+                # return an empty page
+                return HttpResponse('')
+            # If page is out of range deliver last page of results
+            images = paginator.page(paginator.num_pages)
+        if request.is_ajax():
+            return render(request,'images/image/list_ajax.html', {'section': 'images', 'images': images})
+        return render(request, 'images/image/list.html', {'section': 'images', 'images': images})
+    ```
+    ```
+    Note:
+    - you create a QuerySet to return all images from the database.
+
+    - you build a Paginator object to paginate the results, retrieving eight images per page.
+
+    - You get an EmptyPage exception if the requested page is out of range. If this is the case and the request is done via AJAX, you return an empty HttpResponse that will help you to stop the AJAX pagination on the client side.
+
+    - You render the results to two different templates:
+        • For AJAX requests, you render the list_ajax.html template.
+        This template will only contain the images of the requested page.
+
+        • For standard requests, you render the list.html template.
+        This template will extend the base.html template to display the whole page and will include the list_ajax.html template to include the list of images.
+
+    ```
+- Edit images/urls.py
+    ```
+    path('', views.image_list, name='list'),
+
+    ```
+- Buat templates/images/image/list_ajax.html
+    ```html
+    {% load thumbnail %}
+    {% for image in images %}
+        <div class="image">
+            <a href="{{ image.get_absolute_url }}">
+                {% thumbnail image.image 300x300 crop="smart" as im %}
+                <a href="{{ image.get_absolute_url }}"><img src="{{ im.url }}"></a>
+            </a>
+            <div class="info">
+                <a href="{{ image.get_absolute_url }}" class="title">
+                {{ image.title }}
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+    ```
+    ```
+    Note:
+    - This template displays the list of images. You will use it to return results for AJAX requests.
+
+    - In this code, you iterate over images and generate a square thumbnail for each image. You normalize the size of the thumbnails to 300x300 pixels.
+
+    - You also use the smart cropping option. This option indicates that the image has to be incrementally cropped down to the requested size by removing slices from the edges with the least entropy.
+    ```
+- Buat templates/images/image/list.html
+    ```html
+    {% extends "base.html" %}
+    {% block title %}Images bookmarked{% endblock %}
+    {% block content %}
+    <h1>Images bookmarked</h1>
+    <div id="image-list">
+        {% include "images/image/list_ajax.html" %}
+    </div>
+    {% endblock %}
+    ```
+    ```
+    Note:
+    - The list template extends the base.html template.
+    - To avoid repeating code, you include the list_ajax.html template for displaying images.
+    - The list.html template will hold the JavaScript code for loading additional pages when scrolling to the bottom of the page.
+
+    ```
+- Tambahkan kode berikut di templates/images/image/list.html
+    ```js
+    {% block domready %}
+        var page = 1;
+        var empty_page = false;
+        var block_request = false;
+
+    $(window).scroll(function() {
+        var margin = $(document).height() - $(window).height() - 200;
+        if($(window).scrollTop() > margin && empty_page == false && block_request == false) {
+            block_request = true;
+            page += 1;
+            $.get('?page=' + page, function(data) {
+                if(data == '') {
+                    empty_page = true;
+                }
+                else {
+                    block_request = false;
+                    $('#image-list').append(data);
+                }
+            });
+        }
+    });
+    {% endblock %}
+    ```
+    ```
+    Note:
+    - The preceding code provides the infinite scroll functionality.
+
+    - You include the JavaScript code in the domready block that you defined in the base.html template.
+
+    - The code is as follows:
+        1. You define the following variables:
+            ° page: Stores the current page number.
+            ° empty_page: Allows you to know whether the user is on the last page and retrieves an empty page. As soon as you get an empty page, you will stop sending additional AJAX requests because you will assume that there are no more results.
+            ° block_request: Prevents you from sending additional requests while an AJAX request is in progress.
+
+        2. You use $(window).scroll() to capture the scroll event and also to define a handler function for it.
+
+        3. You calculate the margin variable to get the difference between the total document height and the window height, because that's the height of the remaining content for the user to scroll. You subtract a value of 200 from the result so that you load the next page when the user is closer than 200 pixels
+        to the bottom of the page.
+
+        4. You only send an AJAX request if no other AJAX request is being done (block_request has to be false) and the user didn't get to the last page of results (empty_page is also false).
+
+        5. You set block_request to true to avoid a situation where the scroll event triggers additional AJAX requests, and increase the page counter by one, in order to retrieve the next page.
+
+        6. You perform an AJAX GET request using $.get() and receive the HTML response in a variable called data. The following are the two scenarios:
+
+            ° The response has no content: You got to the end of the results, and there are no more pages to load. You set empty_page to true to prevent additional AJAX requests.
+
+            ° The response contains data: You append the data to the HTML element with the image-list ID. The page content expands vertically, appending results when the user approaches the bottom of the page.
+    ```
+- https://127.0.0.1:8000/images/
+    - tampilan pertama 8 images, lalu coba lakukan scroll pastikan semua image yang terbookmark berhasil tampil
+    - jika perlu, gunakan firebug untuk tracking AJAX request dan debug javascript
+- Edit account/templates/base.html
+    ```html
+        <li {% if section == "images" %}class="selected"{% endif %}>
+        <a href="{% url "images:list" %}">Images</a>
+        </li>
+    ```
 <a name="C"></a>
 ## Chapter 6: Tracking User Actions
 <a name="C1"></a>
