@@ -2010,16 +2010,315 @@ repeating the same checks in multiple views.
         <a href="{% url "images:list" %}">Images</a>
         </li>
     ```
+
 <a name="C"></a>
-## Chapter 6: Tracking User Actions
+## C. Chapter 6: Tracking User Actions
+- This chapter will cover the following points:<br>
+    • Building a follow system<br>
+    • Creating many-to-many relationships with an intermediary model<br>
+    • Creating an activity stream application<br>
+    • Adding generic relations to models
+    • Optimizing QuerySets for related objects<br>
+    • Using signals for denormalizing counts
+    • Storing item views in Redis
 <a name="C1"></a>
-### Building a follow system
+### C.1. Building a follow system
+- Tujuan:
+    - build a follow system in your project. your users will be able to
+    follow each other and track what other users share on the platform.
+    - The relationship
+    between users is a many-to-many relationship: a user can follow multiple users and they, in turn, can be followed by multiple users.
 <a name="C11"></a>
-- Creating many-to-many relationships with an intermediary model
+- C.1.1. Creating many-to-many relationships with an intermediary model
+    - Tujuan:
+        - In previous chapters, you created many-to-many relationships by adding the ManyToManyField to one of the related models and letting Django create the database table for the relationship.
+        - but sometimes you may need to create an intermediary model for the relationship.
+        - Creating an intermediary model is necessary when you want to store additional information for the relationship, for example, --the date when the relationship was created--, or --a field
+        that describes the nature of the relationship.--</br>
+    - create an intermediary model to build relationships between users.
+        - There are two reasons for using an intermediary model:</br>
+            • You are using the User model provided by Django and you want to avoid altering it</br>
+            • You want to store the time when the relationship was created
+        - Edit account/models.py
+
+            ```py
+            class Contact(models.Model):
+                user_from = models.ForeignKey('auth.User',
+                                            related_name='rel_from_set',
+                                            on_delete=models.CASCADE)
+                user_to = models.ForeignKey('auth.User',
+                                            related_name='rel_to_set',
+                                            on_delete=models.CASCADE)
+                created = models.DateTimeField(auto_now_add=True,
+                                                db_index=True)
+
+                class Meta:
+                    ordering = ('-created',)
+
+                def __str__(self):
+                    return f'{self.user_from} follows {self.user_to}'
+            ```
+            ```
+            Note:
+            - Contact Model:
+                • user_from: A ForeignKey for the user who creates the relationship
+                • user_to: A ForeignKey for the user being followed
+                • created: A DateTimeField field with auto_now_add=True to store the time when the relationship was created
+            
+                - A database index is automatically created on the ForeignKey fields.
+                - You use db_index=True to create a database index for the created field. This will improve query performance when ordering QuerySets by this field.
+
+                - Using the ORM, you could create a relationship for a user, user1, following another user, user2, like this:
+                    ```
+                    user1 = User.objects.get(id=1)
+                    user2 = User.objects.get(id=2)
+                    Contact.objects.create(user_from=user1, user_to=user2)
+                    ```
+
+                - The related managers, `rel_from_set` and `rel_to_set`, will return a QuerySet for the Contact model.
+
+            ```
+            
+        - access the end side of the relationship
+            - In order to access the end side of the relationship from the User model, it would be desirable for User to contain a ManyToManyField, as follows:
+                ```
+                    following = models.ManyToManyField('self',
+                                                        through=Contact,
+                                                        related_name='followers',
+                                                        symmetrical=False)
+                ```
+                ```
+                    Note:
+                    - In the preceding example, you tell Django to use your custom intermediary model for the relationship by adding `through=Contact` to the `ManyToManyField`.
+                    - This is a many-to-many relationship from the User model to itself; you refer to 'self' in the ManyToManyField field to create a relationship to the same model.
+                    
+                    - When you need additional fields in a many-to-many relationship, create a custom model with a ForeignKey for each side of the relationship.
+                    - Add a ManyToManyField in one of the related models and indicate to Django that your intermediary model should be used by including it in the through parameter.
+                ```
+            
+            - If the User model was part of your application, you could add the previous field to the model. However, you can't alter the User class directly because it belongs to the django.contrib.auth application.
+            - Let's take a slightly different approach by adding this field dynamically to the User model.
+            - Edit account/models.py file:
+
+            ```py
+            from django.contrib.auth import get_user_model
+
+            # Add following field to User dynamically
+            user_model = get_user_model()
+            user_model.add_to_class('following',
+                                    models.ManyToManyField('self',
+                                        through=Contact,
+                                        related_name='followers',
+                                        symmetrical=False))
+            ```
+            ```
+            Note:
+            - you retrieve the user model by using the generic function get_user_model(), which is provided by Django.
+
+            - You use the add_to_class() method of Django models to monkey patch the User model.
+                * Be aware that using add_to_class() is not the recommended way of adding fields to models.
+                * However, you take advantage of using it in this case to avoid creating a custom user model, keeping all the advantages of Django's built-in User model.
+
+            - You also simplify the way that you retrieve related objects using the Django ORM with user.followers.all() and user.following.all().
+
+            - You use the intermediary Contact model and avoid complex queries that would involve additional database joins, as would have been the case had you defined the relationship in your custom Profile model.
+
+            - The table for this many-to-many relationship will be created using the Contact model. Thus, the ManyToManyField, added dynamically, will not imply any database changes for the Django User model.
+
+            - Keep in mind that, in most cases, it is preferable to add fields to the Profile model you created before, instead of monkey patching the User model.
+            - Ideally, you shouldn't alter the existing Django User model. Django allows you to use custom user models.
+            - If you want to use your custom user model, take a look at the documentation at https://docs.djangoproject.com/en/3.0/topics/auth/customizing#specifying-a-custom-user-model.
+
+            - Note that the relationship includes `symmetrical=False`. When you define a ManyToManyField in the model creating a relationship with itself, Django forces the relationship to be symmetrical.
+            - In this case, you are setting symmetrical=False to define a non-symmetrical relationship (if I follow you, it doesn't mean that you automatically follow me).
+
+            - When you use an intermediary model for many-to-many relationships, some of the related manager's methods are disabled, such as add(), create(), or remove(). You need to create or delete instances of the intermediary model instead.
+            ```
+    - Migration
+        ```
+        python manage.py makemigrations account
+        python manage.py migrate account
+        ```
+
 <a name="C12"></a>
-- Creating list and detail views for user profiles
+- C.1.2. Creating list and detail views for user profiles
+    - Edit account/views.py
+
+        ```py
+
+        @login_required
+        def user_list(request):
+            users = User.objects.filter(is_active=True)
+            return render(request,
+                        'account/user/list.html',
+                        {'section': 'people',
+                        'users': users})
+        @login_required
+        def user_detail(request, username):
+            user = get_object_or_404(User,
+                                    username=username,
+                                    is_active=True)
+            return render(request,
+                        'account/user/detail.html',
+                        {'section': 'people',
+                        'user': user})
+        ```
+        ```
+        Note:
+        - These are simple list and detail views for User objects.
+        - The user_list view gets all active users.
+        - is_active flag --> to designate whether the user account is considered active.
+        - You filter the query by is_active=True to return only active users.
+        - This view returns all results, but you can improve it by adding pagination in the same way as you did for the image_list view.
+        - The user_detail view uses the get_object_or_404() shortcut to retrieve the active user with the given username. The view returns an HTTP 404 response if no active user with the given username is found.
+
+        ```
+    - Edit account/urls.py
+
+        ```py
+
+        urlpatterns = [
+            # ...
+            path('users/', views.user_list, name='user_list'),
+            path('users/<username>/', views.user_detail, name='user_detail'),
+            ]
+
+        ```
+        ```
+        Note:
+        - You will use the user_detail URL pattern to generate the canonical URL for users.
+        ```
+        ```
+        ALTERNATIVES:
+        - You have already defined a get_absolute_url() method in a model to return the canonical URL for each object
+        - Another way to specify the URL for a model is by adding the ABSOLUTE_URL_OVERRIDES setting to your project.
+        ```
+        ```PY
+        # Edit the settings.py
+        from django.urls import reverse_lazy
+
+        ABSOLUTE_URL_OVERRIDES = {
+            'auth.user': lambda u: reverse_lazy('user_detail', args=[u.username])
+        }
+        ```
+        ```
+        Note:
+        - Django adds a get_absolute_url() method dynamically to any models that appear in the ABSOLUTE_URL_OVERRIDES setting.
+        - This method returns the corresponding URL for the given model specified in the setting.
+        - You return the user_detail URL for the given user.
+
+        Now, you can use get_absolute_url() on a User instance to retrieve its corresponding URL.:
+        - Open the Python shell with the python manage.py shell command and run the following code to test it:
+
+        >>> from django.contrib.auth.models import User
+        >>> user = User.objects.latest('id')
+        >>> str(user.get_absolute_url())
+        '/account/users/ellington/'
+
+        - The returned URL is as expected.
+
+        ```
+    - Buka account/templates/account, Buat directory berikut:
+
+        ```
+        /user/
+            detail.html
+            list.html
+        ```
+    - Edit ccount/user/list.html
+
+        ```html
+
+        {% extends "base.html" %}
+        {% load thumbnail %}
+        {% block title %}People{% endblock %}
+
+        {% block content %}
+            <h1>People</h1>
+            <div id="people-list">
+                {% for user in users %}
+                <div class="user">
+                    <a href="{{ user.get_absolute_url }}">
+                        <img src="{% thumbnail user.profile.photo 180x180 %}">
+                    </a>
+                    <div class="info">
+                        <a href="{{ user.get_absolute_url }}" class="title">
+                            {{ user.get_full_name }}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
+
+        {% endblock %}
+        ```
+        ```
+        Note:
+        - The preceding template allows you to list all the active users on the site.
+        - You iterate over the given users and use the {% thumbnail %} template tag from easythumbnails to generate profile image thumbnails.
+        ```
+    - Buka template/base.html
+
+        ```html
+
+        <li {% if section == "people" %}class="selected"{% endif %}>
+            <a href="{% url "user_list" %}">People</a>
+        </li>
+        ```
+    - Run
+        - python manage.py runserver
+        - open http://127.0.0.1:8000/account/users/
+        - Maka menu people akan muncul daftar user beserta thumbnail
+        - Jika ada thumbnail tidak muncul, buka settings.py > THUMBNAIL_DEBUG = True, untuk debug
+    - Edit account/user/detail.html
+
+        ```html
+        {% extends "base.html" %}
+        {% load thumbnail %}
+        {% block title %}{{ user.get_full_name }}{% endblock %}
+
+        {% block content %}
+        <h1>{{ user.get_full_name }}</h1>
+            <div class="profile-info">
+                <img src="{% thumbnail user.profile.photo 180x180 %}" class="userdetail">
+            </div>
+            {% with total_followers=user.followers.count %}
+                <span class="count">
+                    <span class="total">{{ total_followers }}</span>
+                    follower{{ total_followers|pluralize }}
+                </span>
+                <a href="#" data-id="{{ user.id }}" data-action="{% if request.user in user.followers.all %}un{% endif %}follow" class="follow button">
+                    {% if request.user not in user.followers.all %}
+                        Follow
+                    {% else %}
+                        Unfollow
+                    {% endif %}
+                </a>
+                <div id="image-list" class="image-container">
+                    {% include "images/image/list_ajax.html" with images=user.images_created.all %}
+                </div>
+            {% endwith %}
+        {% endblock %}
+        ```
+        ```
+        Note:
+        # Make sure that no template tag is split into multiple lines; Django doesn't support multiple line tags.
+
+        - In the detail template, you display the user profile and use the {% thumbnail %} template tag to display the profile image.
+
+        - You show the total number of followers and a link to follow or unfollow the user.
+
+        - You perform an AJAX request to follow/unfollow a particular user.
+
+        - You add data-id and data-action attributes to the <a> HTML element, including the user ID and the initial action to perform when the link element is clicked – follow or unfollow, which depends on the user requesting the page being a follower of this other user or not, as the case may be.
+
+        - You display the images bookmarked by the user, including the images/image/list_ajax.html template.
+        ```
+    - Open your browser again and click on a user who has bookmarked some images. you will see like/unlike button and like field
+You will see profile details, as follows:
 <a name="C13"></a>
-- Building an AJAX view to follow users
+- C.1.3. Building an AJAX view to follow users
+
 <a name="C2"></a>
 - Building a generic activity stream application
 <a name="C21"></a>
