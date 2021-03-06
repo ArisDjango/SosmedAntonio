@@ -39,7 +39,7 @@
     - [ 7. Adding AJAX pagination to your list views](#B7)
 
 - [ C. Chapter 5: Tracking User Actions ](#C)
-- [ 1. Building a follow system ](#C1)
+    - [ 1. Building a follow system ](#C1)
         - [ 1.1. Creating many-to-many relationships with an intermediary model ](#C11)
         - [ 1.2. Creating list and detail views for user profiles](#C12)
         - [ 1.3. Building an AJAX view to follow users](#C13)
