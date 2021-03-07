@@ -57,11 +57,11 @@
         - [ 3.1. Working with signals](#C31)
         - [ 3.2. Application configuration classes](#C32)
     - [ 4. Using Redis for storing item views](#C4)
-        - [ 4.1. Installing Redis](#C19)
-        - [ 4.2. Using Redis with Python](#C20)
-        - [ 4.3. Storing item views in Redis](#C21)
-        - [ 4.4. Storing a ranking in Redis](#C22)
-        - [ 4.5. Next steps with Redis](#C23)
+        - [ 4.1. Installing Redis](#C41)
+        - [ 4.2. Using Redis with Python](#C42)
+        - [ 4.3. Storing item views in Redis](#C43)
+        - [ 4.4. Storing a ranking in Redis](#C44)
+        - [ 4.5. Next steps with Redis](#C45)
 
 
 <a name="A"></a>
