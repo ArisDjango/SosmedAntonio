@@ -2892,13 +2892,246 @@ repeating the same checks in multiple views.
 - Let's take a look at an example of how to improve your queries by denormalizing counts.
     - You will denormalize data from your `Image` model and use Django signals to keep the data updated.
 <a name="C31"></a>
-- Working with signals
+- C.3.1. Working with signals
+    - Tujuan:
+        - Docs: https://docs.djangoproject.com/en/3.0/ref/signals/
+        - Django comes with a signal dispatcher that allows receiver functions to get notified when certain actions occur.
+        - Signals are very useful when you need your code to do something every time something else happens.
+        - Signals allow you to decouple logic:
+            - you can capture a certain action, regardless of the application
+            - or code that triggered that action, and implement logic that gets executed whenever that action occurs.
+        - For example, you can build a signal receiver function that gets executed every time a User object is saved.
+        - You can also create your own signals so that others can get notified when an event happens.
+        - Django provides several signals for models located at `django.db.models.signals`. Some of these signals are as follows:<br>
+            • pre_save and post_save are sent before or after calling the save() method of a model<br>
+            • pre_delete and post_delete are sent before or after calling the delete() method of a model or QuerySet<br>
+            • m2m_changed is sent when a ManyToManyField on a model is changed<br>
+        - Let's say you want to retrieve images by popularity. You can use the Django aggregation functions to retrieve images ordered by the number of users who like them.
+        - Remember that you used Django aggregation functions in Chapter 3, Extending Your Blog Application. The following code will retrieve images according to their number of likes:
+
+        ```py
+
+        from django.db.models import Count
+        from images.models import Image
+
+        images_by_popularity = Image.objects.annotate(
+        total_likes=Count('users_like')).order_by('-total_likes')
+        ```
+        ```
+        Note:
+        - However, ordering images by counting their total likes is more expensive in terms of performance than ordering them by a field that stores total counts.
+        - You can add a field to the Image model to denormalize the total number of likes to boost performance in queries that involve this field.
+        - The issue is how to keep this field updated.
+
+        ```
+    - Edit images/models.py
+        - add the following total_likes field to the Image model:
+
+            ```py
+            class Image(models.Model):
+                # ...
+                total_likes = models.PositiveIntegerField(db_index=True,
+                default=0)
+
+            ```
+            ```
+            Note:
+            - The total_likes field will allow you to store the total count of users who like each image.
+            - Denormalizing counts is useful when you want to filter or order QuerySets by them.
+
+            " There are several ways to improve performance that you have to take into account before denormalizing fields. Consider database indexes, query optimization, and caching before starting to denormalize your data. "
+
+            ```
+    - Migrate
+        ```
+        python manage.py makemigrations images
+        python manage.py migrate images
+        ```
+    - Buat images/signal.py, --> You need to attach a receiver function to the m2m_changed signal.
+
+        ```py
+
+        from django.db.models.signals import m2m_changed
+        from django.dispatch import receiver
+        from .models import Image
+
+        @receiver(m2m_changed, sender=Image.users_like.through)
+        def users_like_changed(sender, instance, **kwargs):
+            instance.total_likes = instance.users_like.count()
+            instance.save()
+
+        ```
+        ```
+        Note:
+        - First, you register the users_like_changed function as a receiver function using the receiver() decorator.
+        - You attach it to the m2m_changed signal.
+        - Then, you connect the function to Image.users_like.through so that the function is only called if the m2m_changed signal has been launched by this sender.
+        - There is an alternate method for registering a receiver function; it consists of using the connect() method of the Signal object.
+        ```
+        ```
+        ===========
+        - Django signals are synchronous and blocking.
+        - Don't confuse signals with asynchronous tasks.
+        - However, you can combine both to launch asynchronous tasks when your code gets notified by a signal.
+        - You will learn to create asynchronous tasks with Celery in Chapter 7, Building an Online Shop.
+        ```
+        ```
+        - You have to connect your receiver function to a signal so that it gets called every time the signal is sent.
+        - The recommended method for registering your signals is by importing them in the ready() method of your application configuration class.
+        - Django provides an application registry that allows you to configure and introspect your applications.
+        ```
 <a name="C32"></a>
-- Application configuration classes
+- C.3.2. Application configuration classes
+    - Tujuan:
+        - Docs: https://docs.djangoproject.com/en/3.0/ref/applications/
+        - Django allows you to specify configuration classes for your applications.
+        - When you create an application using the startapp command, Django adds an apps.py file to the application directory, including a basic application configuration that inherits from the AppConfig class.
+        - The application configuration class allows you to store metadata and the configuration for the application, and it provides introspection for the application.
+        - ---------------------------
+        - In order to register your signal `receiver` functions, when you use the `receiver()` decorator, you just need to import the signals module of your application inside the `ready()` method of the application configuration class.
+        - This method is called as soon as the application registry is fully populated.
+        - Any other initializations for your application should also be included in this method.
+    - Edit images/apps.py
+
+        ```py
+        from django.apps import AppConfig
+
+        class ImagesConfig(AppConfig):
+            name = 'images'
+
+            def ready(self):
+                # import signal handlers
+                import images.signals
+
+        ```
+        ```
+        Note:
+        - You import the signals for this application in the ready() method so that they are imported when the images application is loaded.
+        ```
+    - Run
+        - python manage.py runserver
+        - Open your browser to view an image detail page and click on the LIKE button.
+        - http://127.0.0.1:8000/admin/images/image/1/change/
+        - take a look at the total_likes attribute. You should see that the total_likes attribute is updated with the total number of users who like the image
+    - Now, you can use the total_likes attribute to order images by popularity or display the value anywhere, avoiding using complex queries to calculate it.
+    - Consider the following query to get images ordered according to their likes count:
+
+        ```py
+
+        from django.db.models import Count
+
+        images_by_popularity = Image.objects.annotate(likes=Count('users_like'))
+                                                    .order_by('-likes')
+
+        ```
+        - The preceding query can now be written as follows:
+
+        ```py
+        
+        images_by_popularity = Image.objects.order_by('-total_likes')
+        ```
+    - This results in a less expensive SQL query. This is just an example of how to use Django signals.
+        ```
+        ------------------
+        Use signals with caution since they make it difficult to know the control flow.
+        In many cases, you can avoid using signals if you know which receivers need to be notified.
+        ```
+    - You will need to set initial counts for the rest of the Image objects to match the current status of the database.
+        - python manage.py shell
+        ```
+        from images.models import Image
+
+        for image in Image.objects.all():
+            image.total_likes = image.users_like.count()
+            image.save()
+        ```
+        ```
+        Note:
+        The likes count for each image is now up to date.
+        ```
 <a name="C4"></a>
 - Using Redis for storing item views
+    - Tujuan:
+        - Redis is an advanced key/value database that allows you to save different types of data.
+        - It also has extremely fast I/O operations.
+        - Redis stores everything in memory, but the data can be persisted by dumping the dataset to disk every once in a while, or by adding each command to a log.
+        - Redis is very versatile compared to other key/value stores:
+            - it provides a set of powerful commands
+            - supports diverse data structures, such as strings, hashes, lists, sets, ordered sets, and even bitmaps or HyperLogLogs.
+        - Although SQL is best suited to schema-defined persistent data storage, Redis offers numerous advantages when dealing with rapidly changing data, volatile storage, or when a quick cache is needed.
+
 <a name="C41"></a>
-- Installing Redis
+- C.4.1. Installing Redis
+    - Linux
+        - download the latest Redis version from https://redis.io/download
+        - Unzip the tar.gz file, enter the redis directory, and compile Redis using the make command, as follows:
+            ```
+            cd redis-5.0.8
+            make
+            ```
+    - Windows Subsystem for Linux (WSL)
+        - You can read instructions on enabling WSL and installing Redis at https://redislabs.com/blog/redis-on-windows-10/
+    - After installing Redis, use the following shell command to start the Redis server:
+        ```
+        src/redis-server
+        ```
+        ```
+        By default, Redis runs on port 6379.
+        you can specify a custom port using the --port flag, for example, redis-server --port 6655.
+
+        ```
+    - Keep the Redis server running and open another shell. Start the Redis client with the following command:
+        ```
+        src/redis-cli
+
+        You will see the Redis client shell prompt, like this:
+        127.0.0.1:6379>
+        ```
+    - Enter the SET command in the Redis shell to store a value in a key:
+        ```
+        127.0.0.1:6379> SET name "Peter"
+        OK
+        ```
+        ```
+        Note:
+        - The preceding command creates a name key with the string value "Peter" in the Redis database.
+        - The OK output indicates that the key has been saved successfully.
+        ```
+    - Next, retrieve the value using the GET command, as follows:
+        ```
+        127.0.0.1:6379> GET name
+        "Peter" 
+        ```
+    - You can also check whether a key exists using the EXISTS command. This command returns 1 if the given key exists, and 0 otherwise:
+        ```
+        127.0.0.1:6379> EXISTS name
+        (integer) 1
+        ```
+    - You can set the time for a key to expire using the EXPIRE command, which allows you to set time-to-live in seconds.
+        ```
+        127.0.0.1:6379> GET name
+        "Peter"
+        127.0.0.1:6379> EXPIRE name 2
+        (integer) 1
+
+        Wait for two seconds and try to get the same key again:
+        127.0.0.1:6379> GET name
+        (nil)
+            * The (nil) response is a null response and means that no key has been found.
+        ``` 
+    - You can also delete any key using the DEL command, as follows:
+        ```
+        127.0.0.1:6379> SET total 1
+        OK
+        127.0.0.1:6379> DEL total
+        (integer) 1
+        127.0.0.1:6379> GET total
+        (nil)
+        ```
+    - These are just basic commands for key operations.
+    - Redis commands at https://redis.io/commands
+    - Redis data types at https://redis.io/topics/data-types
+
 <a name="C42"></a>
 - Using Redis with Python
 <a name="C43"></a>
