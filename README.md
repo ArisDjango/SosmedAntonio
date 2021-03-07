@@ -65,9 +65,9 @@
 
 
 <a name="A"></a>
-## Chapter 4: Building a Social Website
+## A. Chapter 4: Building a Social Website
 <a name="A1"></a>
-### Instalasi Django dan Struktur App
+### A.1. Instalasi Django dan Struktur App
 - Clone repo dan venv
     - cd PYTHON_FOLDER
     - git clone https://github.com/ArisDjango/SosmedAntonio.git
@@ -100,7 +100,7 @@
 
 
 <a name="A2"></a>
-### Menggunakan Django authentication framework
+### A.2. Menggunakan Django authentication framework
     • AuthenticationMiddleware: Associates users with requests using sessions
     • SessionMiddleware: Handles the current session across requests
     The authentication framework also includes the following models:
@@ -108,7 +108,7 @@
         • Group: A group model to categorize users
         • Permission: Flags for users or groups to perform certain actions
 <a name="A21"></a>
-- login view ===========================
+- A.2.1. login view ===========================
     - Tujuan:
         - Menggunakan django authentication framework untuk system login
         - Membuat view login yang menghandle:
@@ -232,7 +232,7 @@
     - maka akan muncul halaman login
 
 <a name="A22"></a>
-- Using Django authentication views
+- A.2.2. Using Django authentication views
     - docs : https://docs.djangoproject.com/en/3.0/topics/auth/default/#allauthentication-
     - otentifikasi bawaan django dihandle `django.contrib.auth.views`:
         - Login and Logout
@@ -249,7 +249,7 @@
             • PasswordResetCompleteView: pesan ke user bahwa reset password berhasil, dan redirect ke home.
 
 <a name="A23"></a>        
-- Login and logout views
+- A.2.3. Login and logout views
     - Edit account/urls.py
 
         ```python
@@ -386,7 +386,7 @@
     - http://127.0.0.1:8000/account/login/
 
 <a name="A24"></a>
-- Changing password views
+- A.2.4. Changing password views
     - Edit account/urls.py
 
         ```python
@@ -427,7 +427,7 @@
     - http://127.0.0.1:8000/account/password_change/
 
 <a name="A25"></a>
-- Resetting password views
+- A.2.5. Resetting password views
     - Edit account/urls.py
 
         ```python
@@ -530,12 +530,12 @@
         ]
         ```
 <a name="A3"></a>
-### User registration and user profiles
+### A.3. User registration and user profiles
 - Saat ini user yang telah terdaftar di db(didaftarkan admin), bisa login, logout, merubah password, reset password. 
 - sekarang saatnya membuat anonymous visitor agar bisa membuat akun user.
 <a name="A31"></a>
 
-- User registration
+- A.3.1. User registration
     - Edit account/forms.py
         ```python
         class UserRegistrationForm(forms.ModelForm):
@@ -625,7 +625,7 @@
         - % url "register" % = path('register/', views.register, name='register'),
         ```
 <a name="A32"></a>
-- Extending the user model
+- A.3.2. Extending the user model
     - Edit account/models.py
         - docs: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#django.contrib.auth.get_user_model
 
@@ -762,11 +762,11 @@
         password</a>.</p>
         ```
 <a name="A33"></a>    
-- Using a custom user model
+- A.3.3. Using a custom user model
     - bisa juga menggunakan custom user model, implementasi: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#substituting-a-custom-user-model.
 
 <a name="A34"></a>
-- Using the messages framework
+- A.3.4. Using the messages framework
     - docs: https://docs.djangoproject.com/en/3.0/ref/contrib/messages/.
     - base.html
     - letakkan kode ini diantara div header dan content
@@ -809,7 +809,7 @@
         - jika sukses akan muncul pesan
 
 <a name="A4"></a>
-### Building a custom authentication backend
+### A.4. Building a custom authentication backend
 - docs: https://docs.djangoproject.com/en/3.0/topics/auth/customizing/#otherauthentication-sources
 
     - Buat account/authentication.py
@@ -848,7 +848,7 @@
         - http://127.0.0.1:8000/account/login/
    
 <a name="A5"></a>
-### Adding social authentication to your site
+### A.5. Adding social authentication to your site
 - docs: https://python-social-auth.readthedocs.io/en/latest/backends/index.html#supported-backends.
     - pip install social-auth-app-django
     - register di settings.py --> 'social_django',
@@ -869,7 +869,7 @@
             ```
         - Tes http://aris.com:8000/account/login/
 <a name="A51"></a>
-- Running the development server through HTTPS
+- A.5.1. Running the development server through HTTPS
     - pip install django-extensions
     - settings.py --> INSTALLED_APPS --> 'django_extensions',
     - pip install werkzeug
@@ -878,7 +878,7 @@
     - https://mysite.com:8000/account/login/ --> menggunakan https, maka akan muncul peringatan untrusted image
 
 <a name="A52"></a>
-- Authentication using Facebook
+- A.5.2. Authentication using Facebook
     - tutorial video: https://www.youtube.com/watch?v=oAWUyg_PPLk
     - settings.py --> AUTHENTICATION_BACKENDS
 
@@ -913,7 +913,7 @@
             ```
     - buka https://mysite.com:8000/account/login/, kini bisa login menggunakan fb
 <a name="A53"></a>
-    - Authentication using Twitter
+    - A.5.3. Authentication using Twitter
         - skip, butuh review dulu
 <a name="A54"></a>
     - Authentication using Google
@@ -1095,7 +1095,7 @@
 
 
 <a name="B21"></a>
-- Cleaning form fields
+- B.2.1. Cleaning form fields
     - Tujuan :
         - Memastikan url image yang diambil adalah url berakhiran 'jpeg'
     - Tambahkan pada ImageCreateForm()
@@ -1115,7 +1115,7 @@
             cleaned_data perlu dipelajari
         ```
 <a name="B22"></a>
-- Overriding the save() method of a ModelForm
+- B.2.2. Overriding the save() method of a ModelForm
     - Tujuan:
         - pada model form, menggunakan save() untuk menyimpan  model instance ke database dan me return object.
         - selanjutnya menerima commit, jika false, maka save() akan mereturn model instance namun tidak disimpan di database
@@ -1261,7 +1261,7 @@
     
 
 <a name="B23"></a>
-- Building a bookmarklet with jQuery
+- B.2.3. Building a bookmarklet with jQuery
     - Tujuan:
         - A bookmarklet is a bookmark stored in a web browser that contains JavaScript code to extend the browser's functionality. When you click on the bookmark, the JavaScript code is executed on the website being displayed in the browser. This is very useful for building tools that interact with other websites.
         - Let's create a bookmarklet in a similar way for your website, using jQuery. official website: https://jquery.com/.
@@ -1414,7 +1414,7 @@
     - `python manage.py runserver_plus --cert-file cert.crt`
 
 <a name="B3"></a>
-### Creating a detail view for images
+### B.3. Creating a detail view for images
 - Membuat view untuk tampilan detail images
 - images/views.py
 
@@ -1536,7 +1536,7 @@
     ```
 
 <a name="B5"></a>
-### Adding AJAX actions with jQuery
+### B.5. Adding AJAX actions with jQuery
 - Tujuan:
     - LIKE / UNLIKE BUTTON
     - You are going to add a link to the image detail page to let users click on it in order to like an image. You will perform this action with an AJAX call to avoid reloading the whole page.
@@ -1627,7 +1627,7 @@
         - The examples in this chapter include JavaScript code in Django templates. The preferred way to include JavaScript code is by loading .js files, which are served as static files, especially when they are large scripts.
     ```
 <a name="B52"></a>
-- Cross-site request forgery in AJAX requests
+- B.5.2. Cross-site request forgery in AJAX requests
     - Tujuan:
         - Docs CSRF protection and AJAX : https://docs.djangoproject.com/en/3.0/ref/csrf/#ajax.
         - With CSRF protection active, Django checks for a CSRF token in all POST requests.
@@ -1677,7 +1677,7 @@
         The CSRF token will be included in all AJAX requests that use unsafe HTTP methods, such as POST or PUT.
         ```
 <a name="B53"></a>
-- Performing AJAX requests with jQuery
+- B.5.3. Performing AJAX requests with jQuery
     - Edit template/images/image/detail.html
 
         ```
@@ -1797,7 +1797,7 @@
 - Saat menggunakan JavaScript, terutama operasi AJAX requests direkomendasikan menggunakan tool untuk debugging JavaScript dan HTTP requests. gunakan Inspect Element untuk mengakses web developer tools.
 
 <a name="B6"></a>
-### Creating custom decorators for your views
+### B.6. Creating custom decorators for your views
 - Tujuan:
     - Let's restrict your AJAX views to allow only requests generated via AJAX.
         - The Django request object provides an is_ajax() method that checks whether the request is being made with XMLHttpRequest, which means that it is an AJAX request.
@@ -1847,7 +1847,7 @@
 - Build custom decorators for your views if you find that you are
 repeating the same checks in multiple views.
 <a name="B7"></a>
-### Adding AJAX pagination to your list views
+### B.7. Adding AJAX pagination to your list views
 - Tujuan:
     - you need to list all bookmarked images on your website.
     - You will use AJAX pagination to build an infinite scroll functionality. Infinite scroll is achieved by loading the next results automatically when the user scrolls to the bottom of the page.
@@ -2314,33 +2314,583 @@ repeating the same checks in multiple views.
 
         - You display the images bookmarked by the user, including the images/image/list_ajax.html template.
         ```
-    - Open your browser again and click on a user who has bookmarked some images. you will see like/unlike button and like field
-You will see profile details, as follows:
+    - Open your browser again and click on a user who has bookmarked some images. you will see detail user profile view page include image that has been bookmarked
+
 <a name="C13"></a>
 - C.1.3. Building an AJAX view to follow users
+    - Tujuan : create follow/unfollow a user using AJAX.
+    - Buka account/views.py
 
+        ```py
+        from django.http import JsonResponse
+        from django.views.decorators.http import require_POST
+        from common.decorators import ajax_required
+        from .models import Contact
+
+        @ajax_required
+        @require_POST
+        @login_required
+        def user_follow(request):
+            user_id = request.POST.get('id')
+            action = request.POST.get('action')
+            if user_id and action:
+                try:
+                    user = User.objects.get(id=user_id)
+                    if action == 'follow':
+                        Contact.objects.get_or_create(user_from=request.user,user_to=user)
+                    else:
+                        Contact.objects.filter(user_from=request.user,user_to=user).delete()
+                    return JsonResponse({'status':'ok'})
+                except User.DoesNotExist:
+                    return JsonResponse({'status':'error'})
+            return JsonResponse({'status':'error'})
+
+        ```
+        ```
+        Note:
+        - The `user_follow` view is quite similar to the `image_like` view that you created before.
+        - Since you are using a custom intermediary model for the user's many-tomany relationship, the default add() and remove() methods of the automatic manager of ManyToManyField are not available.
+        - You use the intermediary Contact model to create or delete user relationships.
+
+        ```
+    - Edit account/urls.py
+
+        ```py
+
+        path('users/follow/', views.user_follow, name='user_follow'),
+        ```
+        ```
+        Note:
+        - Ensure that you place the preceding pattern before the user_detail URL pattern.
+        - Otherwise, any requests to /users/follow/ will match the regular expression of the user_detail pattern and that view will be executed instead.
+        - Remember that in every HTTP request, Django checks the requested URL against each pattern in order of appearance and stops at the first match.
+        ```
+    - Edit account/user/detail.html
+
+        ```js
+
+        {% block domready %}
+            $('a.follow').click(function(e){
+                e.preventDefault();
+                $.post('{% url "user_follow" %}',
+                    {
+                        id: $(this).data('id'),
+                        action: $(this).data('action')
+                    },
+                    function(data){
+                        if (data['status'] == 'ok') {
+                            var previous_action = $('a.follow').data('action');
+                            // toggle data-action
+                            $('a.follow').data('action', previous_action == 'follow' ? 'unfollow' : 'follow');
+                            // toggle link text
+                            $('a.follow').text(
+                            previous_action == 'follow' ? 'Unfollow' : 'Follow');
+                            // update total followers
+                            var previous_followers = parseInt(
+                                    $('span.count .total').text());
+                                    $('span.count .total').text(previous_action == 'follow' ? previous_followers + 1 : previous_followers - 1);
+                        }
+                    }
+                );
+            });
+        {% endblock %}
+        ```
+        ```
+        Note:
+        - The preceding code is the JavaScript code to perform the AJAX request to follow or unfollow a particular user and also to toggle the follow/unfollow link.
+
+        - You use jQuery to perform the AJAX request and set both the data-action attribute and the text of the HTML <a> element based on its previous value.
+
+        - When the AJAX action is performed, you also update the total followers count displayed on the page.
+        ```
+    - Buka detail page salah satu user profile, coba Follow/unfollow, coba lihat perubahan follower yang terjadi
 <a name="C2"></a>
 - Building a generic activity stream application
+    - Tujuan:
+        - You are going to build an activity stream application so that every user can see the recent interactions of the users they follow.
+        - To do so, you will need a model to save the actions performed by users on the website and a simple way to add actions to the feed.
+    - Buat app baru bernama 'action'
+
+        ```bash
+
+        python manage.py startapp actions
+        ```
+    - registrasi app pada settings.py
+
+        ```py
+
+        INSTALLED_APPS = [
+            # ...
+            'actions.apps.ActionsConfig',
+            ]
+        ```
+    - Edit actions/models.py
+
+        ```py
+
+        from django.db import models
+
+        class Action(models.Model):
+            user = models.ForeignKey('auth.User',
+                                    related_name='actions',
+                                    db_index=True,
+                                    on_delete=models.CASCADE)
+            verb = models.CharField(max_length=255)
+            created = models.DateTimeField(auto_now_add=True,
+                                            db_index=True)
+
+            class Meta:
+                ordering = ('-created',)
+        ```
+        ```
+        Note:
+        - The preceding code shows the Action model that will be used to store user activities.
+        - The fields of this model are as follows:
+            • user: The user who performed the action; this is a ForeignKey to the Django User model.
+            • verb: The verb describing the action that the user has performed.
+            • created: The date and time when this action was created. You use auto_ now_add=True to automatically set this to the current datetime when the object is saved for the first time in the database.
+        ```
+        ```
+        - With this basic model, you can only store actions, such as user X did something.
+        - You need an extra ForeignKey field in order to save actions that involve a target object, such as user X bookmarked image Y or user X is now following user Y.
+        - As you already know, a normal ForeignKey can point to only one model.
+        - Instead, you will need a way for the action's target object to be an instance of an existing model.
+        - This is what the -- Django contenttypes framework -- will help you to do.
+
+        
+        ```
 <a name="C21"></a>
-- Using the contenttypes framework
+- C.2.1. Using the contenttypes framework
+    - Tujuan:
+        - Docs: https://docs.djangoproject.com/en/3.0/ref/contrib/contenttypes/
+        - Django includes a contenttypes framework located at `django.contrib.contenttypes`.
+        - This application can track all models installed in your project and provides a generic interface to interact with your models.
+        - ----->
+        - The django.contrib.contenttypes application is included in the INSTALLED_APPS setting by default when you create a new project using the startproject command.
+        - The contenttypes application contains a ContentType model.
+        - Instances of this model represent the actual models of your application, and new instances of ContentType are automatically created when new models are installed in your project.
+        - The ContentType model has the following fields:
+            - app_label: This indicates the name of the application that the model belongs to. This is automatically taken from the app_label attribute of the model Meta options. For example, your Image model belongs to the images application.
+            - model: The name of the model class.
+            - name: This indicates the human-readable name of the model. This is automatically taken from the verbose_name attribute of the model Meta options.
+        - Let's take a look at how you can interact with ContentType objects. Open the shell using the -- python manage.py shell -- command.
+        - You can obtain the ContentType object corresponding to a specific model by performing a query with the app_label and model attributes, as follows:
+
+            ```
+            >>> from django.contrib.contenttypes.models import ContentType
+            >>> image_type = ContentType.objects.get(app_label='images', model='image')
+            >>> image_type
+            <ContentType: images | image>
+
+            ```
+        - You can also retrieve the model class from a ContentType object by calling its model_class() method:
+
+            ```
+            >>> image_type.model_class()
+            <class 'images.models.Image'>
+            ```
+        - It's also common to get the ContentType object for a particular model class, as follows:
+
+            ```
+            >>> from images.models import Image
+            >>> ContentType.objects.get_for_model(Image)
+            <ContentType: images | image>
+            ```
+
 <a name="C22"></a>
-- Adding generic relations to your models
+- C.2.2. Adding generic relations to your models
+    - Tujuan:
+        - In generic relations, ContentType objects play the role of pointing to the model used for the relationship.
+        - You will need three fields to set up a generic relation in a model:
+            - A ForeignKey field to ContentType: --> This will tell you the model for the relationship
+            - A field to store the primary key of the related object: --> This will usually be a PositiveIntegerField to match Django's automatic primary key fields
+            - A field to define and manage the generic relation using the two previous fields: --> The contenttypes framework offers a GenericForeignKey field for this purpose
+    - Edit actions/models.py
+
+        ```py
+        from django.db import models
+        from django.contrib.contenttypes.models import ContentType
+        from django.contrib.contenttypes.fields import GenericForeignKey
+
+        class Action(models.Model):
+            user = models.ForeignKey('auth.User',
+                                    related_name='actions',
+                                    db_index=True,
+                                    on_delete=models.CASCADE)
+            verb = models.CharField(max_length=255)
+            target_ct = models.ForeignKey(ContentType,
+                                        blank=True,
+                                        null=True,
+                                        related_name='target_obj',
+                                        on_delete=models.CASCADE)
+            target_id = models.PositiveIntegerField(null=True,
+                                                    blank=True,
+                                                    db_index=True)
+            target = GenericForeignKey('target_ct', 'target_id')
+            created = models.DateTimeField(auto_now_add=True,
+                                            db_index=True)
+            class Meta:
+                ordering = ('-created',)
+        ```
+        ```
+        Note:
+        - You have added the following fields to the Action model:
+            • target_ct: A ForeignKey field that points to the ContentType model
+            • target_id: A PositiveIntegerField for storing the primary key of the related object
+            • target: A GenericForeignKey field to the related object based on the combination of the two previous fields
+
+        - Django does not create any field in the database for GenericForeignKey fields.
+        - The only fields that are mapped to database fields are `target_ct` and `target_id`.
+        - Both fields have blank=True and null=True attributes, so that a target object is not required when saving Action objects.
+
+        " You can make your applications more flexible by using generic relations instead of foreign keys."
+
+        ```
+    - Migrate
+
+        ```
+        python manage.py makemigrations actions
+        python manage.py migrate
+
+        ```
+    - Edit action/admin.py untuk Registrasi account app ke admin
+
+        ```py
+        from django.contrib import admin
+        from .models import Action
+
+        @admin.register(Action)
+        class ActionAdmin(admin.ModelAdmin):
+            list_display = ('user', 'verb', 'target', 'created')
+            list_filter = ('created',)
+            search_fields = ('verb',)
+        ```
+    - Run:
+
+        ```
+        python manage.py runserver
+
+        http://127.0.0.1:8000/admin/actions/action/add/
+
+        ```
+        ```
+        Note:
+        - As you will notice in the preceding admin panel page, only the `target_ct` and `target_id` fields that are mapped to actual database fields are shown.
+
+        - The `GenericForeignKey` field does not appear in the form.
+
+        - The `target_ct` field allows you to select any of the registered models of your Django project.
+
+        - You can restrict the content types to choose from a limited set of models using the `limit_choices_to` attribute in the `target_ct` field; the `limit_choices_to` attribute allows you to restrict the content of `ForeignKey` fields to a specific set of values.
+        ```
+    - Buat actions/utils.py
+        - Tujuan:
+            - You need to define a shortcut function that will allow you to create new Action objects in a simple way.
+        - Edit utils.py
+
+            ```py
+            from django.contrib.contenttypes.models import ContentType
+            from .models import Action
+
+            def create_action(user, verb, target=None):
+                action = Action(user=user, verb=verb, target=target)
+                action.save()
+            ```
+            ```
+            Note:
+            - The create_action() function allows you to create actions that optionally include a target object.
+            - You can use this function anywhere in your code as a shortcut to add new actions to the activity stream.
+            ```
+
 <a name="C23"></a>
-- Avoiding duplicate actions in the activity stream
+- C.2.3. Avoiding duplicate actions in the activity stream
+    - Tujuan:
+        - improve the create_action() function to skip obvious duplicated actions.
+        - Sometimes, your users might click several times on the LIKE or UNLIKE button or perform the same action multiple times in a short period of time.
+        - This will easily lead to storing and displaying duplicate actions.
+    - Edit utils.py
+
+        ```py
+        import datetime
+        from django.utils import timezone
+        from django.contrib.contenttypes.models import ContentType
+        from .models import Action
+
+        def create_action(user, verb, target=None):
+            # check for any similar action made in the last minute
+            now = timezone.now()
+            last_minute = now - datetime.timedelta(seconds=60)
+            similar_actions = Action.objects.filter(user_id=user.id,
+                                                    verb= verb,
+                                                    created__gte=last_minute)
+            if target:
+                target_ct = ContentType.objects.get_for_model(target)
+                similar_actions = similar_actions.filter(
+                                                    target_ct=target_ct,
+                                                    target_id=target.id)
+            if not similar_actions:
+                # no existing actions found
+                action = Action(user=user, verb=verb, target=target)
+                action.save()
+                return True
+            return False
+        ```
+        ```
+        Note: 
+        - You have changed the create_action() function to avoid saving duplicate actions and return Boolean to tell you whether the action was saved.
+        - This is how you avoid duplicates:
+            • First, you get the current time using the timezone.now() method provided by Django.
+                - This method does the same as datetime.datetime.now() but returns a timezone-aware object.
+                - Django provides a setting called USE_TZ to enable or disable timezone support.
+                - The default settings.py file created using the startproject command includes USE_TZ=True.
+
+            • You use the last_minute variable to store the datetime from one minute ago and retrieve any identical actions performed by the user since then.
+
+            • You create an Action object if no identical action already exists in the last minute. You return True if an Action object was created, or False otherwise.
+        ```
+
 <a name="C24"></a>
-- Adding user actions to the activity stream
+- C.2.4. Adding user actions to the activity stream
+    - Tujuan:
+        - add some actions to your views to build the activity stream for your users.
+        - You will store an action for each of the following interactions:<br>
+            • A user bookmarks an image<br>
+            • A user likes an image<br>
+            • A user creates an account<br>
+            • A user starts following another user<br>
+    - Edit images/views.py
+        - add import
+
+            ```py
+            
+            from actions.utils import create_action
+
+            ```
+        - In the `image_create()` view, add `create_action()` after saving the image, like this:
+
+            ```py
+
+            new_item.save()
+            create_action(request.user, 'bookmarked image', new_item)
+
+            ```
+        - In the `image_like()` view, add `create_action()` after adding the user to the `users_like` relationship, as follows:
+
+            ```py
+
+            image.users_like.add(request.user)
+            create_action(request.user, 'likes', image) 
+            ```
+    - Edit account/views.py
+        - add import
+
+            ```py
+            
+            from actions.utils import create_action
+            ```
+        - In the `register()` view, add `create_action()` after creating the `Profile` object, as follows:
+
+            ```py
+
+            Profile.objects.create(user=new_user)
+            create_action(new_user, 'has created an account')
+            ```
+        - In the `user_follow()` view, add `create_action()`:
+
+            ```py
+
+            Contact.objects.get_or_create(user_from=request.user, user_to=user)
+            create_action(request.user, 'is following', user)
+            ```
+    - As you can see in the preceding code, thanks to your Action model and your helper function, it's very easy to save new actions to the activity stream.    
 <a name="C25"></a>
-- Displaying the activity stream
+- C.2.5. Displaying the activity stream
+    - Tujuan:
+        - you need a way to display the activity stream for each user.
+        - You will include the activity stream in the user's dashboard.
+    - Edit account/views.py
+        - Import the `Action` model and modify the `dashboard()` view, as follows:
+
+        ```py
+        from actions.models import Action
+
+        @login_required
+        def dashboard(request):
+            # Display all actions by default
+            actions = Action.objects.exclude(user=request.user)
+            following_ids = request.user.following.values_list('id',flat=True)
+
+            if following_ids:
+                # If user is following others, retrieve only their actions
+                actions = actions.filter(user_id__in=following_ids)
+            actions = actions[:10]
+
+            return render(request,
+                        'account/dashboard.html',
+                        {'section': 'dashboard',
+                        'actions': actions})
+        ```
+        ```
+        Note:
+        - you retrieve all actions from the database, excluding the ones performed by the current user.
+
+        - By default, you retrieve the latest actions performed by all users on the platform.
+
+        - If the user is following other users, you restrict the query to retrieve only the actions performed by the users they follow.
+
+        - Finally, you limit the result to the first 10 actions returned.
+
+        - You don't use order_by() in the QuerySet because you rely on the default ordering that you provided in the Meta options of the Action model.
+
+        - Recent actions will come first since you set ordering = ('-created',) in the Action model.
+        ```
+
 <a name="C26"></a>
-- Optimizing QuerySets that involve related objects
+- C.2.6. Optimizing QuerySets that involve related objects
+    - Tujuan:
+        - Every time you retrieve an Action object, you will usually access its related User object and the user's related Profile object.
+        - The Django ORM offers a simple way to retrieve related objects at the same time, thereby avoiding additional queries to the database.
+
 <a name="C27"></a>
-- Using select_related()
+- C.2.7. Using select_related()
+    - Tujuan:
+        - Django offers a QuerySet method called `select_related()` that allows you to retrieve related objects for one-to-many relationships.
+        - This translates to a single, more complex QuerySet, but you avoid additional queries when accessing the related objects.
+        - The `select_related` method is for `ForeignKey` and `OneToOne` fields.
+        - It works by performing a SQL JOIN and including the fields of the related object in the SELECT statement.
+    - To take advantage of `select_related()`:
+        - edit the following line of the preceding code:
+
+            ```py
+
+            actions = actions[:10]
+            ```
+        - Also, add `select_related` to the fields that you will use, like this:
+
+            ```py
+
+            actions = actions.select_related('user', 'user__profile')[:10]
+            ```
+            ```
+            Note:
+            - You use `user__profile` to join the `Profile` table in a single SQL query.
+            - If you call `select_related()` without passing any arguments to it, it will retrieve objects from all `ForeignKey` relationships.
+            - Always limit `select_related()` to the relationships that will be accessed afterward.
+            - Using select_related() carefully can vastly improve execution time.
+            ```
 <a name="C28"></a>
-Using prefetch_related()
+- C.2.8. Using prefetch_related()
+    - Problem:
+        - `select_related()` will help you to boost performance for retrieving related objects in one-to-many relationships.
+        - However, `select_related()` doesn't work for many-to-many or many-to-one relationships (`ManyToMany` or reverse `ForeignKey` fields).
+    - Solusi:
+        - Django offers a different QuerySet method called `prefetch_related` that works for many-to-many and many-to-one relationships in addition to the relationships supported by `select_related()`.
+        - The `prefetch_related()` method performs a separate lookup for each relationship and joins the results using Python.
+        - This method also supports the prefetching of `GenericRelation` and `GenericForeignKey`.
+    - Edit account/views.py
+        - complete your query by adding `prefetch_related()` to it for the target `GenericForeignKey` field, as follows:
+
+            ```py
+            actions = actions.select_related('user', 'user__profile')\
+                        .prefetch_related('target')[:10]
+            ```
+            ```
+            Note:
+            This query is now optimized for retrieving the user actions, including related objects.
+            ```
 <a name="C29"></a>
-Creating templates for actions
+- C.2.9. Creating templates for actions
+    - Tujuan:
+        - create the template to display a particular Action object.
+    - Add the following file structure to it:
+
+        ```
+        actions/
+            action/
+            detail.html
+        ```
+    - Edit template/actions/action/detail.html
+
+        ```html
+
+        {% load thumbnail %}
+        {% with user=action.user profile=action.user.profile %}
+        
+        <div class="action">
+            <div class="images">
+                {% if profile.photo %}
+                    {% thumbnail user.profile.photo "80x80" crop="100%" as im %}
+                    <a href="{{ user.get_absolute_url }}">
+                        <img src="{{ im.url }}" alt="{{ user.get_full_name }}" class="item-img">
+                    </a>
+                {% endif %}
+                {% if action.target %}
+                    {% with target=action.target %}
+                        {% if target.image %}
+                            {% thumbnail target.image "80x80" crop="100%" as im %}
+                            <a href="{{ target.get_absolute_url }}">
+                                <img src="{{ im.url }}" class="item-img">
+                            </a>
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            </div>
+            <div class="info">
+                <p>
+                    <span class="date">{{ action.created|timesince }} ago</span>
+                    <br />
+                    <a href="{{ user.get_absolute_url }}">
+                        {{ user.first_name }}
+                    </a>
+                    {{ action.verb }}
+                    {% if action.target %}
+                        {% with target=action.target %}
+                            <a href="{{ target.get_absolute_url }}">{{ target }}</a>
+                        {% endwith %}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+        {% endwith %}
+
+        ```
+        ```
+        Note:
+        - This is the template used to display an `Action` object.
+        - First, you use the {% with %} template tag to retrieve the user performing the action and the related Profile object.
+        - Then, you display the image of the target object if the Action object has a related target object.
+        - Finally, you display the link to the user who performed the action, the verb, and the `target` object, if any.
+        ```
+    - Edit template/account/dashboard.html
+        - append the following code to the bottom of the `content` block:
+
+            ```html
+            <h2>What's happening</h2>
+                <div id="action-list">
+                    {% for action in actions %}
+                    {% include "actions/action/detail.html" %}
+                    {% endfor %}
+                </div>
+
+            ```
+    - Run
+        - http://127.0.0.1:8000/account/
+        - Log in as an existing user and perform several actions so that they get stored in the database.
+        - Then, log in using another user, follow the previous user, and take a look at the generated action stream on the dashboard page.
+    - Summary
+        - You just created a complete activity stream for your users, and you can easily add new user actions to it.
+        - You can also add infinite scroll functionality to the activity stream by implementing the same AJAX paginator that you used for the image_list view.
+
 <a name="C3"></a>
-### Using signals for denormalizing counts
+### C.3. Using signals for denormalizing counts
+- Tujuan:
+    - There are some cases when you may want to denormalize your data.
+    - Denormalization is making data redundant in such a way that it optimizes read performance.
+    - For example, you might be copying related data to an object to avoid expensive read queries to the database when retrieving the related data.
+    - You have to be careful about denormalization and only start using it when you really need it.
+    - The biggest issue you will find with denormalization is that it's difficult to keep your denormalized data updated.
+- Let's take a look at an example of how to improve your queries by denormalizing counts.
+    - You will denormalize data from your `Image` model and use Django signals to keep the data updated.
 <a name="C31"></a>
 - Working with signals
 <a name="C32"></a>
