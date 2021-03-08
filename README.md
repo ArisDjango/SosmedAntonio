@@ -3134,9 +3134,213 @@ repeating the same checks in multiple views.
 
 <a name="C42"></a>
 - Using Redis with Python
+    - Docs: https://redis-py.readthedocs.io/
+    - pip install redis==3.4.1
+    - python manage.py shell --> execute the following code:
+        ```
+        >>> import redis
+        >>> r = redis.Redis(host='localhost', port=6379, db=0)
+        ```
+        ```
+        Note: 
+        - The preceding code creates a connection with the Redis database.
+        - In Redis, databases are identified by an integer index instead of a database name. By default, a client is connected to the database 0.
+        - The number of available Redis databases is set to 16, but you can change this in the redis.conf configuration file.
+        ```
+    - Next, set a key using the Python shell:
+        ```
+        >>> r.set('foo', 'bar')
+        True
+        ```
+        ```
+        Note:
+        - The command returns True, indicating that the key has been successfully created.
+    - Now you can retrieve the key using the get() command:
+        ```
+        >>> r.get('foo')
+        b'bar'
+        ```
+        ```
+        As you will note from the preceding code, the methods of Redis follow the Redis command syntax.
+        ```
+    - Let's integrate Redis into your project.
+        - Edit bookmarks/settings.py
+            ```
+            REDIS_HOST = 'localhost'
+            REDIS_PORT = 6379
+            REDIS_DB = 0
+            ```
 <a name="C43"></a>
 - Storing item views in Redis
+    - Tujuan:
+        - Let's find a way to store the total number of times an image has been viewed.
+        - If you implement this using the Django ORM, it will involve a SQL UPDATE query every time an image is displayed.
+        - If you use Redis instead, you just need to increment a counter stored in memory, resulting in a much better performance and less overhead.
+    - Edit images/views.py
+        - add the following code to it after the existing import statements:
+
+            ```py
+            import redis
+            from django.conf import settings
+
+            # connect to redis
+            r = redis.Redis(host=settings.REDIS_HOST,
+                            port=settings.REDIS_PORT,
+                            db=settings.REDIS_DB)
+
+            ```
+        - modify the `image_detail` view, like this:
+
+            ```py
+
+            def image_detail(request, id, slug):
+                image = get_object_or_404(Image, id=id, slug=slug)
+                # increment total image views by 1
+                total_views = r.incr(f'image:{image.id}:views')
+                return render(request,
+                                'images/image/detail.html',
+                                {'section': 'images', 'image': image, 'total_views': total_views }
+                            )
+            ```
+            ```
+            Note:
+            - In this view, you use the incr command that increments the value of a given key by 1. If the key doesn't exist, the incr command creates it.
+            - The incr() method returns the final value of the key after performing the operation.
+            - You store the value in the total_views variable and pass it in the template context.
+            - You build the Redis key using a notation, such as object-type:id:field (for example, image:33:id).
+            ```
+            ```
+            " The convention for naming Redis keys is to use a colon sign as a separator for creating namespaced keys.
+            By doing so, the key names are especially verbose and related keys share part of the same schema in their names.
+            ```
+        - Edit templates/images/image/detail.html
+            - add the following code to it after the existing `<span class="count">` element:
+
+                ```html
+                <span class="count">
+                {{ total_views }} view{{ total_views|pluralize }}
+                </span>
+                ```
+        - Run:
+            - open an image detail page in your browser and reload it several times.
+            - You will see that each time the view is processed, the total views displayed is incremented by 1.
+            - You have successfully integrated Redis into your project to store item counts.
 <a name="C44"></a>
 - Storing a ranking in Redis
+    - Tujuan:
+        - Let's build something more complex with Redis. You will create a ranking of the most viewed images in your platform.
+        - For building this ranking, you will use Redis sorted sets.
+        - A sorted set is a non-repeating collection of strings in which every member is associated with a score. Items are sorted by their score.
+    - Edit images/views.py
+        - make the `image_detail` view look as follows:
+
+            ```py
+
+            def image_detail(request, id, slug):
+                image = get_object_or_404(Image, id=id, slug=slug)
+                # increment total image views by 1
+                total_views = r.incr(f'image:{image.id}:views')
+                # increment image ranking by 1
+                r.zincrby('image_ranking', 1, image.id)
+
+                return render(request,
+                            'images/image/detail.html',
+                            {'section': 'images',
+                            'image': image,
+                            'total_views': total_views})
+            ```
+            ```
+            Note:
+            - You use the zincrby() command to store image views in a sorted set with the image:ranking key.
+            - You will store the image id and a related score of 1, which will be added to the total score of this element in the sorted set.
+            - This will allow you to keep track of all image views globally and have a sorted set ordered by the total number of views.
+            ```
+    - create a new view to display the ranking of the most viewed images.
+        - Edit images/views.py
+
+            ```py
+            @login_required
+            def image_ranking(request):
+                # get image ranking dictionary
+                image_ranking = r.zrange('image_ranking', 0, -1,   desc=True)[:10]
+                image_ranking_ids = [int(id) for id in image_ranking]
+                # get most viewed images
+                most_viewed = list(Image.objects.filter(id__in=image_ranking_ids))
+                most_viewed.sort(key=lambda x: image_ranking_ids.index(x.id))
+
+                return render(request,
+                            'images/image/ranking.html',
+                            {'section': 'images',
+                            'most_viewed': most_viewed})
+
+            ```
+            ```
+            The image_ranking view works like this:
+            1. You use the zrange() command to obtain the elements in the sorted set.
+                - This command expects a custom range according to the lowest and highest score.
+                - Using 0 as the lowest and -1 as the highest score, you are telling Redis to return all elements in the sorted set.
+                - You also specify desc=True to retrieve the elements ordered by descending score. Finally, you slice the results using [:10] to get the first 10 elements with the highest score.
+            2. You build a list of returned image IDs and store it in the image_ranking_ids variable as a list of integers.
+                - You retrieve the Image objects for those IDs and force the query to be executed using the list() function.
+                - It is important to force the QuerySet execution because you will use the sort() list method on it (at this point, you need a list of objects instead of a QuerySet).
+            3. You sort the Image objects by their index of appearance in the image ranking.
+                - Now you can use the most_viewed list in your template to display the 10 most viewed images.
+            ```
+    - templates/images/image/ranking.html
+        - add the following code to it:
+
+            ```html
+
+            {% extends "base.html" %}
+            {% block title %}Images ranking{% endblock %}
+
+            {% block content %}
+                <h1>Images ranking</h1>
+                <ol>
+                    {% for image in most_viewed %}
+                    <li>
+                        <a href="{{ image.get_absolute_url }}">
+                            {{ image.title }}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ol>
+            {% endblock %}
+            ```
+            ```
+            Note:
+                - The template is pretty straightforward.
+                - You iterate over the Image objects contained in the most_viewed list and display their names, including a link to the image detail page.
+            ```
+    - Edit images/urls.py
+
+        ```py
+        path('ranking/', views.image_ranking, name='ranking'),
+        ```
+    - Run
+        - python manage.py runserver
+        - access your site in your web browser, and load the image detail page multiple times for different images.
+        - http://127.0.0.1:8000/images/ranking/
+        - You should be able to see an image ranking,
+        - You just created a ranking with Redis!
 <a name="C45"></a>
 - Next steps with Redis
+- Tujuan:
+    - Redis is not a replacement for your SQL database, but it does offer fast in-memory storage that is more suitable for certain tasks.
+    - Add it to your stack and use it when you really feel it's needed.
+    - The following are some scenarios in which Redis could
+    be useful:
+        - Counting:
+            - As you have seen, it is very easy to manage counters with Redis.
+            - You can use incr() and incrby() for counting stuff.
+        - Storing latest items:
+            - You can add items to the start/end of a list using lpush() and rpush().
+            - Remove and return the first/last element using lpop() / rpop().
+            - You can trim the list's length using ltrim() to maintain its length.
+        - Queues: In addition to push and pop commands, Redis offers the blocking of queue commands.
+        - Caching:
+            - Using expire() and expireat() allows you to use Redis as a cache.
+            - You can also find third-party Redis cache backends for Django.
+        - Pub/sub: Redis provides commands for subscribing/unsubscribing and sending messages to channels.
+        - Rankings and leaderboards: Redis sorted sets with scores make it very easy to create leaderboards.
+        - Real-time tracking: Redis's fast I/O makes it perfect for real-time scenarios.
